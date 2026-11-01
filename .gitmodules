@@ -1,0 +1,40 @@
+[submodule "submodules/bg-backend-agent-pack"]
+	path = submodules/bg-backend-agent-pack
+	url = git@git.biaoguoworks.com:biaoguoworks/bg-backend-agent-pack.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/css"]
+	path = submodules/css
+	url = http://git.biaoguoworks.com/biaoguoworks/css.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/demeter"]
+	path = submodules/demeter
+	url = git@git.biaoguoworks.com:biaoguoworks/demeter.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/demeter-order-service"]
+	path = submodules/demeter-order-service
+	url = http://git.biaoguoworks.com/biaoguoworks/demeter-order-service.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/jackfruit"]
+	path = submodules/jackfruit
+	url = http://git.biaoguoworks.com/biaoguoworks/jackfruit.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/users"]
+	path = submodules/users
+	url = http://git.biaoguoworks.com/user/users.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/zeus-core-service"]
+	path = submodules/zeus-core-service
+	url = git@git.biaoguoworks.com:biaoguoworks/zeus-core-service.git
+	branch = master
+	ignore = dirty
+[submodule "submodules/zeus-price-service"]
+	path = submodules/zeus-price-service
+	url = git@git.biaoguoworks.com:biaoguoworks/zeus-price-service.git
+	branch = master
+	ignore = dirty
