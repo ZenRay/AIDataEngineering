@@ -1,0 +1,9 @@
+# 数据建设 repo（meta 管理，Phase 2 起启用；meta 也会自动维护本文件）
+projects/
+
+# 个人存档区（长期受限目录：Read ask / archive Read deny / Edit deny，由 .claude/settings.json 强制）
+BackDocs/
+
+# 个人本地配置（永不提交）
+.claude/settings.local.json
+CLAUDE.local.md
