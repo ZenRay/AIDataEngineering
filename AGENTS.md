@@ -63,10 +63,24 @@ Claude Code / Cursor 有惰性加载机制可自动获得子目录指令，但�
 
 **新成员 onboarding 顺序**：clone → 人工审查上述配置 → 再启动 Claude Code 并 trust（trust 前权限提示偏多属正常，deny/ask 保护已生效）。
 
-## 环境工具链
+## 环境工具链（已定：方案 D — direnv 路线）
 
-**待定**（Phase 0 步骤 4：mise vs direnv 二选一，官方不支持二者共存）。
-决定后更新本节，并向 `.claude/settings.json` 回填对应配置（direnv 路线：SessionStart + CwdChanged 双 hook 写 `$CLAUDE_ENV_FILE`；mise 路线：Agent 命令用 `mise exec --` 包装约定）。
+**分工**（决策依据见 BackDocs/research 研究文档 §4，mise 因官方不支持与 direnv 共存而出局）：
+
+- 环境变量 / PATH / 凭据注入 → **direnv**：`.envrc` 提交入库；每台机器每目录一次性 `direnv allow`
+- Python 版本 + venv + lock → **uv**：各子项目为独立 uv 项目（不用 uv workspace）；`uv python pin` 写 `.python-version`；纪律：**不要在 .venv 里手工 pip install**（会被下次 `uv sync` 剪除），依赖变更一律走 pyproject + uv lock；uv.lock 提交
+- Node 版本 → **待 PoC 选型**（候选：Volta（shim 免 hook，Agent 非交互 shell 友好，未验证）或 fnm + `.node-version`）；定案前 Node 项目暂用 `.nvmrc`
+- **不引入 mise**（官方明确与 direnv 共存 unsupported）
+
+**Agent 环境注入（官方机制，已配置）**：顶层 `.claude/settings.json` 的 SessionStart + CwdChanged 双 hook 执行 `direnv export bash > "$CLAUDE_ENV_FILE"`——Agent 每条 Bash 命令自动携带当前目录环境；`/cd` 进子 repo 后自动重载。
+
+**命令纪律（Agent 与脚本都要遵守）**：
+
+- 每条 Bash 命令都是新 shell：**export 不跨调用保留**——多步依赖写成单条命令，或依赖 CLAUDE_ENV_FILE 前言注入
+- CI / 非交互脚本用 `direnv exec <dir> <cmd>` 或 `eval "$(direnv export bash)"` 显式加载（hook 式自动加载只在交互 shell 生效）
+- 成员 shell rc 文件的交互专属段需加非交互 guard（`[[ $- != *i* ]] && return`），防止破坏 Agent 的 Bash 工具
+
+**新成员 onboarding（环境部分）**：安装 direnv → 全局 shell hook → 在含 `.envrc` 的每个目录 `direnv allow` → （未来由 onboarding 脚本自动化）。
 
 ## 上下文隔离
 

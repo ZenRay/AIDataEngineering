@@ -4,6 +4,9 @@ projects/
 # 个人存档区（长期受限目录：Read ask / archive Read deny / Edit deny，由 .claude/settings.json 强制）
 BackDocs/
 
+# direnv 本地缓存（.envrc 本身提交，缓存不提交）
+.direnv/
+
 # 个人本地配置（永不提交）
 .claude/settings.local.json
 CLAUDE.local.md
