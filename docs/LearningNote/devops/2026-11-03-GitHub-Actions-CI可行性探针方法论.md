@@ -13,7 +13,7 @@ project-description: AI 数据工程项目集：伞形 workspace（8 个上游�
 # ── 扩展辅助字段（snapshot 组）──
 snapshot_date: 2026-11-03
 snapshot_source: ZenRay/test 真实 Actions 运行（双 job 全绿）+ 伞形 workspace CI 落位决策链
-snapshot_env: GitHub private repo（个人号）+ ubuntu-latest hosted runner；内网 GitLab git.biaoguoworks.com 作可达性标靶
+snapshot_env: GitHub private repo（个人号）+ ubuntu-latest hosted runner；企业内网 GitLab（域名已脱敏）作可达性标靶
 snapshot_archive: ZenRay/test @ 5060997（探针仓，可能被删——故 yml 全文内联本文 §4.2）；伞形仓库 README TODO-1 关闭记录
 ---
 
@@ -63,7 +63,7 @@ snapshot_archive: ZenRay/test @ 5060997（探针仓，可能被删——故 yml 
 **前置条件**：
 1. 一个 GitHub 账号 + 一个可折腾的 **靶子 private repo**（我们的 `ZenRay/test` 就是前几轮双推实验的靶子，一仓两用）
 2. 本机 git 可推送到该 repo（SSH key 已配好——这一步不通就先解决凭据，也是 A1 的一部分）
-3. 一个"预期够不到"的内网资源地址当探针目标（我们：`https://git.biaoguoworks.com/...`）
+3. 一个"预期够不到"的内网资源地址当探针目标（我们：企业内网 GitLab 地址，此处已脱敏）
 4. ⚠️ 安全前置：探针目标要选**你们本来就认定"仅内网可达"** 的地址，别拿允许公网访问的服务当标靶
 
 ## 3. 设计：探针 workflow 的三条纪律
@@ -120,7 +120,7 @@ jobs:
       - name: assert GitHub-hosted runner CANNOT reach corp intranet GitLab
         run: |
           set +e                                            # 不让"命令失败"直接弄死 job——失败才是我们要的
-          OUT=$(GIT_TERMINAL_PROMPT=0 timeout 25 git ls-remote https://git.biaoguoworks.com/da/dual-push-test.git HEAD 2>&1)
+          OUT=$(GIT_TERMINAL_PROMPT=0 timeout 25 git ls-remote https://INTRANET-GITLAB.example/da/dual-push-test.git HEAD 2>&1)
           RC=$?                                             # 只探"够不够得到"，不碰数据——拿一个不存在的仓探也行
           echo "exit=$RC"; echo "$OUT"                     # 全程留证据：绿了也要能复查依据
           if [ $RC -eq 0 ]; then
@@ -229,7 +229,7 @@ jobs:
 | 探针问题 | GitLab 上的等价探法 |
 |------|------|
 | CI 开不开（runner） | 建靶子项目跑最小 `.gitlab-ci.yml`（`test: {script: [echo hi]}`）——没有可用 runner 会永远 pending；runner 情况问管理员（TODO-2） |
-| runner 够不够得到目标 | job 内跑 `git ls-remote <内网仓>`（内网 runner 预期通→正向断言）与 `git ls-remote https://github.com/<你的靶子>`（测 runner 出公网能力，决定 Renovate 能否在 GitLab 跑——**Renovate 需要访问 git.biaoguoworks.com，大概率还要出网装包**） |
+| runner 够不够得到目标 | job 内跑 `git ls-remote <内网仓>`（内网 runner 预期通→正向断言）与 `git ls-remote https://github.com/<你的靶子>`（测 runner 出公网能力，决定 Renovate 能否在 GitLab 跑——**Renovate 需要访问内网 GitLab，大概率还要出网装包**） |
 | 权限边界 | 顺带验证 §9.1#2 凭据调查：普通成员 token 对输入源仓的只读可达性 |
 | 附加必答 | 空仓首推角色墙（v2.7 已撞过）：靶子项目验证 Maintainer 申请是否到位 |
 

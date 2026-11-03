@@ -46,7 +46,15 @@ if [ "${1:-}" != "--reviewed" ]; then
 fi
 
 echo "== 4/7 仓库 bootstrap =="
-git submodule update --init --recursive && ok "submodules 初始化完成" || bad "submodule init 失败（检查网络/SSH key 对 git.biaoguoworks.com 的可达性）"
+# 伞形仓的 .gitmodules/.meta 使用 URL 别名（upstream: / upstream-user: / darepo:），
+# 真实地址只存在于每人本机的 ~/.gitconfig（insteadOf 映射，不入仓不推送）。
+# 首次配置：向伞形仓负责人索取三条 git config --global 映射命令（经内网/线下渠道传递）。
+if git config --global --get-regexp 'insteadof' 2>/dev/null | grep -q 'upstream:'; then
+  ok "URL 别名映射已配置（upstream: 可解析）"
+else
+  bad "缺少 URL 别名映射——submodule/meta 将全部无法解析！请向负责人索取三条 insteadOf 配置命令并执行后重跑本脚本"
+fi
+git submodule update --init --recursive && ok "submodules 初始化完成" || bad "submodule init 失败（检查内网/代理可达性与 SSH key；伞形仓用别名 URL，见上方映射检查）"
 if [ -f .meta ] && command -v meta >/dev/null; then
   meta git update && ok "meta 清单同步完成（注意：新清单要先 git pull，meta git update 不拉清单）" || warn "meta git update 失败"
 else

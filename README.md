@@ -10,7 +10,7 @@
 
 | 项 | 状态 |
 |------|------|
-| Phase 0（伞形定型/hooks 硬边界/direnv 环境/规范+模板+onboarding） | ✅ 全部落地（commits 1ae2a39…249682f），仅剩 D1/C1 两个可延项 |
+| Phase 0（伞形定型/hooks 硬边界/direnv 环境/规范+模板+onboarding/**URL 脱敏**） | ✅ **已收口（v1.8）**。挂起均为触发制而非欠账：D1 模板机制（等第二个 repo）、C1 ask 复测（等能弹框的环境）、onboarding 实战（等首个新成员） |
 | Phase 1（架构定案 v2.11：**伞形=GitHub 个人单主**，不上 GitLab；双 host 转为数据仓备选能力，方案 A 已验证） | 🔓 R1① 角色已获得；待 E1：GitHub 建空 private 仓给 URL 即推 |
 | Phase 2 meta 清单 | ✅ **已激活**（E3 完成，commit 5314783）：`.meta` 登记 nl2sql-backend + 队友两步同步真实首演成功；与 .gitmodules 双清单并存 |
 | GitHub CI | ✅ 探测定案（TODO-1）：Actions 可用 / hosted 不可达内网 → 落位表见探针笔记 |
@@ -33,7 +33,7 @@
 | ~~**D2**~~ | 伞形 repo GitLab 归属 | Phase 1 · 步骤 12 | ✅ **已拍（2026-11-03）：不放 GitLab**——伞形=个人 GitHub 单主；数据仓群归 `da` 组（Maintainer 已获） |
 | ~~**D3**~~ | 镜像范围 | Phase 1 · 步骤 9 | ✅ 随 D2 转化：伞形无镜像问题；"数据仓→个人 GitHub 副本"变逐仓再议项（方法已验证） |
 | **D7** | 🆕 输入源 bump 机制落位（D2 架构的连锁产物）：原"GitLab 侧 Renovate bump PR"随伞形不入 GitLab 失去宿主。候选：① 内网 self-hosted runner 挂 GitHub 仓（该机需出网 github.com）② 本地脚本化 bump（`submodule update --remote` + commit + 本地跑影响分析 hooks）——影响分析可先由本地 Stop/post-bump 脚本承担 | Phase 2 · 步骤 14 | 待 E4 的 runner 情报后拍 |
-| E1 | 生产执行（简化为单主机）：**GitHub 建空 private repo**（建议名 `AIDataEngineering`；**不要**勾 README/gitignore 初始化）→ 给我 SSH 地址 → 我 `remote add` + 首推 + ci-baseline 冒烟（🔮→✅，Gitleaks+配置校验首跑） | Phase 1 · 步骤 12 | **只差你建库**（其余全就绪） |
+| E1 | 生产执行（简化为单主机）：**GitHub 建空 private repo**（建议名 `AIDataEngineering`；**不要**勾 README/gitignore 初始化）→ 给我 SSH 地址 → 我 `remote add` + 首推 + ci-baseline 冒烟（🔮→✅）。**脱敏已完成**：仓内全为别名 URL，域名零残留 | Phase 1 · 步骤 12 | **只差你建库给 URL** |
 | E2 | CODEOWNERS 落地（覆盖 AGENTS.md 审查面六类路径） | Phase 1 · 步骤 12 + Phase 0 步骤 7 | 等 E1（repo 上有远端才能建） |
 | C2 | 靶子仓清理（ZenRay/test、da/dual-push-test，网页删；模板/方法论均已内联留底） | 收尾 | 随时，可选 |
 
