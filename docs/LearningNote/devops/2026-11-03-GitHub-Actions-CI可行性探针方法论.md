@@ -1,7 +1,7 @@
 ---
 title: GitHub Actions CI 可行性探针方法论（靶子测试）
 create_time: 2026-11-03 09:55:19
-update_time: 2026-11-03 09:55:19
+update_time: 2026-11-03 10:05:00
 category: devops
 subcategory: cicd
 documentType: tutorial
@@ -27,15 +27,16 @@ snapshot_archive: ZenRay/test @ 5060997（探针仓，可能被删——故 yml 
 
 ## 0. 概念准备（新手 3 分钟）
 
-| 术语 | 一句话解释 |
-|------|------|
-| **CI**（持续集成） | 把"机器帮你检查代码/配置"的流程固化下来：每次 push/PR 自动跑一组任务 |
-| **GitHub Actions** | GitHub 自带的 CI 平台。你在仓库里放 `.github/workflows/*.yml`，push 后 GitHub 的机器（runner）自动按 yml 执行 |
-| **workflow / job / step** | 三层套娃：一个 yml 文件 = 一个 workflow；内含多个并行的 job；每个 job 由多个 step 顺序执行 |
-| **runner** | 真正跑命令的机器。**hosted**=GitHub 云端的机器（开箱即用，但它在公网）；**self-hosted**=你自己提供的机器（可以在你的内网里） |
-| **`on: push`** | 触发器：有代码推上来就自动开跑——所以我们"触发 Actions"的方式就是普通的一次 `git push` |
-| **靶子仓库（throwaway repo）** | 专门用来做一次性实验的小破仓库。真仓库别拿来试——实验产物（提交、workflow）是脏的，靶子用完可弃 |
-| **反向断言** | 本篇最重要的技巧，§5 细说 |
+| 术语 | 一句话解释 | 深入阅读 |
+|------|------|------|
+| **CI**（持续集成） | 把"机器帮你检查代码/配置"的流程固化下来：每次 push/PR 自动跑一组任务 | — |
+| **GitHub Actions** | GitHub 自带的 CI 平台。你在仓库里放 `.github/workflows/*.yml`，push 后 GitHub 的机器（runner）自动按 yml 执行 | [官方：理解 GitHub Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) |
+| **workflow / job / step** | 三层套娃：一个 yml 文件 = 一个 workflow；内含多个并行的 job；每个 job 由多个 step 顺序执行 | [官方：Workflow 语法](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions) |
+| **runner** | 真正跑命令的机器。**hosted**=GitHub 云端的机器（开箱即用，但它在公网）；**self-hosted**=你自己提供的机器（可以在你的内网里） | [hosted 说明](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) · [self-hosted 说明](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners) · [runner 镜像（ubuntu-latest 里有什么）](https://github.com/actions/runner-images) |
+| **`on: push`** | 触发器：有代码推上来就自动开跑——所以我们"触发 Actions"的方式就是普通的一次 `git push` | 同 Workflow 语法 §on |
+| **额度（private 仓）** | 个人 private 仓每月有免费分钟数（ubuntu runner），超出计钱——探针这种量级用不到零头 | [官方 Limits](https://docs.github.com/en/actions/reference/limits) |
+| **靶子仓库（throwaway repo）** | 专门用来做一次性实验的小破仓库。真仓库别拿来试——实验产物（提交、workflow）是脏的，靶子用完可弃 | — |
+| **反向断言** | 本篇最重要的技巧，§5 细说 | — |
 
 ---
 
@@ -87,8 +88,11 @@ mkdir -p .github/workflows && $EDITOR .github/workflows/github-ci-probe.yml
 # ③ 提交并推送——push 本身就是触发器（workflow 里 on: push）
 git add . && git commit -m "ci: probe" && git push origin HEAD:main
 
-# ④ 看结果：靶子仓网页 → Actions 标签页 → 最新一条 "github-ci-probe"
-#    命令行只能看到 push 成功，看不到 run 结果（没有 gh CLI 时去网页）
+# ④ 看结果（需登录该仓的浏览器）：
+#    run 列表：https://github.com/ZenRay/test/actions
+#    本 workflow 的历史运行：https://github.com/ZenRay/test/actions/workflows/github-ci-probe.yml
+#    workflow 源文件：https://github.com/ZenRay/test/blob/main/.github/workflows/github-ci-probe.yml
+#    命令行只能看到 push 成功，看不到 run 结果（无 gh CLI 时去网页；点进 run 可看每个 job 的实时日志）
 ```
 
 ### 4.2 探针 workflow 全文（我们的实际版本，含逐行讲解）
@@ -202,6 +206,7 @@ jobs:
 | 版本 | 日期 | 变更 |
 |------|------|------|
 | v1.0 | 2026-11-03 | 初版：靶子探针方法论 + 实测判读 + CI 落位定案 + 正式期起步模板 |
+| v1.0.1 | 2026-11-03 | 按反馈补链接：术语表内联官方文档列、§4.1 run 网页入口直链、新增 §11 参考链接（checkout ✅ 实跑 / gitleaks-action 🔮 未实跑分开标注） |
 
 - 修改 §6/§7 结论前查 §9 验证表（尤其：GitHub 若对 runner 出网策略改版、内网 GitLab 增加公网入口，A2/A3 结论**必须重跑探针**——把 4.2 的 yml 再推一次靶子仓即可，10 分钟）
 - 正式期模板（§7 底部）落地跑绿后：版本历史加行、其状态从 🔮 升 ✅，并同步伞形 README TODO 板
@@ -227,6 +232,14 @@ jobs:
 | runner 够不够得到目标 | job 内跑 `git ls-remote <内网仓>`（内网 runner 预期通→正向断言）与 `git ls-remote https://github.com/<你的靶子>`（测 runner 出公网能力，决定 Renovate 能否在 GitLab 跑——**Renovate 需要访问 git.biaoguoworks.com，大概率还要出网装包**） |
 | 权限边界 | 顺带验证 §9.1#2 凭据调查：普通成员 token 对输入源仓的只读可达性 |
 | 附加必答 | 空仓首推角色墙（v2.7 已撞过）：靶子项目验证 Maintainer 申请是否到位 |
+
+## 11. 参考链接（概念 → 官方文档；实操 → 本次靶子）
+
+**官方概念/配置**：[理解 Actions](https://docs.github.com/en/actions/learn-github-actions/understanding-github-actions) · [Workflow 全语法](https://docs.github.com/en/actions/writing-workflows/workflow-syntax-for-github-actions) · [hosted runners](https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners) / [self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/managing-self-hosted-runners/about-self-hosted-runners) · [Limits 与免费额度](https://docs.github.com/en/actions/reference/limits) · [private 仓 Actions 开关（settings 被关时来这查）](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/managing-github-actions-settings-for-a-repository)
+
+**本次靶子实操**（需登录）：[run 列表](https://github.com/ZenRay/test/actions) · [github-ci-probe 运行史](https://github.com/ZenRay/test/actions/workflows/github-ci-probe.yml) · [源文件 @ 5060997](https://github.com/ZenRay/test/blob/main/.github/workflows/github-ci-probe.yml)
+
+**用到的第三方 Actions**：[actions/checkout@v4](https://github.com/actions/checkout)（✅ 本次实跑） · [gitleaks/gitleaks-action@v2](https://github.com/gitleaks/gitleaks-action)（🔮 正式期模板引用，未实跑——用前核对 README 的 token 权限要求）
 
 ## 附录：新手常见坑
 
