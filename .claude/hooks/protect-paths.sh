@@ -20,8 +20,10 @@ PROJECT_DIR="${CLAUDE_PROJECT_DIR:-$PWD}"
 PROJECT_DIR="${PROJECT_DIR//\\//}"
 
 # 前缀锚定匹配（比子串匹配精确，避免误伤名字含 submodules 的合法路径）
-if [[ "$FILE_PATH" == "$PROJECT_DIR/submodules/"* || "$FILE_PATH" == "$PROJECT_DIR/BackDocs/"* ]]; then
-  echo "Blocked: $FILE_PATH 命中保护路径（submodules/ 为只读上游 submodule，BackDocs/ 为个人存档长期受限区）。如确需修改：上游代码请到对应上游仓库操作，BackDocs 请由用户手动处理。" >&2
+# 分层说明：BackDocs 非 archive 部分的「写」由 settings.json ask 规则逐次弹框确认，本 hook 不拦
+# （hook 的 exit 2 先于权限检查——若在此拦截，ask 永远弹不出来）；此处只拦绝对禁改区。
+if [[ "$FILE_PATH" == "$PROJECT_DIR/submodules/"* || "$FILE_PATH" == "$PROJECT_DIR/BackDocs/archive/"* ]]; then
+  echo "Blocked: $FILE_PATH 命中绝对保护路径（submodules/ 为只读上游 submodule；BackDocs/archive/ 为绝对禁改区）。BackDocs 其他内容的修改走 settings.json 的 ask 逐次确认。" >&2
   exit 2
 fi
 exit 0

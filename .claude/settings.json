@@ -3,12 +3,15 @@
     "ask": [
       "Read(./BackDocs/**)",
       "Read(./BackDocs)",
+      "Edit(./BackDocs/**)",
+      "Write(./BackDocs/**)",
       "Bash(git push:*)"
     ],
     "deny": [
       "Read(./BackDocs/archive/**)",
       "Read(./BackDocs/archive)",
-      "Edit(./BackDocs/**)",
+      "Edit(./BackDocs/archive/**)",
+      "Write(./BackDocs/archive/**)",
       "Read(./.env)",
       "Read(./.env.*)",
       "Read(./secrets/**)",

@@ -10,8 +10,8 @@
   数仓开发从中提取表结构/业务逻辑/埋点，并需感知上游变更。
   **禁止在其中提交/推送**；指针 bump 只能通过专门的 bump 提交/PR（CI 接入后将运行影响分析）。
 - `projects/`：数据建设 repo（meta 清单管理、各自独立 remote/分支；Phase 2 启用，本目录被顶层 gitignore）。
-- `BackDocs/`：个人存档区（**长期受限目录**）：读取需用户当场确认（ask 规则弹框，逐次确认）；
-  `BackDocs/archive/` 绝对禁止读取（deny）；整个目录禁止修改（deny + hooks）。不主动索引、不引用其内容。
+- `BackDocs/`：个人存档区（**长期受限目录**）：读取与修改均需用户当场确认（ask 规则逐次弹框）；
+  `BackDocs/archive/` 读写均绝对禁止（deny + hooks）。不主动索引、不主动引用其内容。
 - `docs/`：项目集级文档。
 - 顶层 repo 只管文档与 Agent 配置，**不吸收任何子项目代码**。
 
@@ -33,13 +33,15 @@ meta project import projects/<name> <repo-url>   # 自动更新 .meta 与 .gitig
 git commit -m "chore: register data repo <name>"
 ```
 
+> ⚠️ GitLab 首推注意：自建实例对新仓库默认分支有保护——**空仓库首次 push 需 Maintainer 角色**（与 commit 署名无关：认证=SSH key，授权=项目角色）。新 repo 首推前先解决角色或由管理员执行。
+
 ## Git 纪律
 
 - 任何 commit/push 前先执行 `git rev-parse --show-toplevel` 确认所在仓库（有 Agent 跨仓库提交到错误仓库的官方事故先例）。
 - 子仓库（submodules/、projects/ 下）的提交在其自身目录内进行，遵循其自身分支规范。
 - 不 force push、不直接推主干，除非用户明确要求。
 - meta 团队增量同步是**两步**：`git pull`（拉新 .meta 清单）→ `meta git update`（clone 本地缺失的子仓库）。`meta git update` 不会拉取清单本身。
-- 双 host（GitHub+GitLab，Phase 1）启用后：多 push URL 非原子，push 后须确认两个 host 均成功；mirror host 制度性只读。
+- 双 host（GitLab 团队主 + GitHub 个人副本，Phase 1 定案=多 push URL，仅副本 owner 机器配置、SSH URL）：非原子，push 后逐 URL 核对两侧结果；**分支 push 不携带 tag**，需同步副本时显式 `git push origin --tags`；副本 repo 不设写权限协作者（天然只读）。
 
 ## 跨工具桥接（Codex 特别注意）
 
