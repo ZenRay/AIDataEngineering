@@ -10,3 +10,4 @@ BackDocs/
 # 个人本地配置（永不提交）
 .claude/settings.local.json
 CLAUDE.local.md
+/projects/nl2sql-backend/

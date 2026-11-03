@@ -1,0 +1,5 @@
+{
+  "projects": {
+    "projects/nl2sql-backend": "git@git.biaoguoworks.com:da/nl2sql-backend.git"
+  }
+}
