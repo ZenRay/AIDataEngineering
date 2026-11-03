@@ -11,7 +11,7 @@
 | 项 | 状态 |
 |------|------|
 | Phase 0（伞形定型/hooks 硬边界/direnv 环境/规范+模板+onboarding） | ✅ 全部落地（commits 1ae2a39…249682f），仅剩 D1/C1 两个可延项 |
-| Phase 1（GitLab 团队主 + GitHub 个人副本，多 push URL 方案 A） | 📌 定案 + 机制已端到端验证；唯一阻塞 = 现实角色问题（R1） |
+| Phase 1（架构定案 v2.11：**伞形=GitHub 个人单主**，不上 GitLab；双 host 转为数据仓备选能力，方案 A 已验证） | 🔓 R1① 角色已获得；待 E1：GitHub 建空 private 仓给 URL 即推 |
 | Phase 2 meta 清单 | ✅ **已激活**（E3 完成，commit 5314783）：`.meta` 登记 nl2sql-backend + 队友两步同步真实首演成功；与 .gitmodules 双清单并存 |
 | GitHub CI | ✅ 探测定案（TODO-1）：Actions 可用 / hosted 不可达内网 → 落位表见探针笔记 |
 | GitLab CI | ⏸️ 暂缓（E4，待 R1 + runner 情报；移植指南现成） |
@@ -30,9 +30,10 @@
 | # | 事项 | 归属 | 触发 / 阻塞 |
 |:---:|------|------|------|
 | **R1** | 🌍 现实动作：向 GitLab 管理员问三件——① Maintainer 角色 ② runner 情况 ③ mirror 策略 | Phase 1 · 步骤 11 | 🔓 **① 已获得（2026-11-03）**；②③ 随 E4 补问 |
-| **D2** | 伞形 repo 在 GitLab 的归属组（建议独立子组如 `da/ai-data-eng`，权限边界干净） | Phase 1 · 步骤 12 | 随 R1 一并定 |
-| **D3** | 镜像范围拍板（建议：起步**只镜像伞形 repo**；8 个业务输入源永不镜像=已定；数据 repo 逐个再议） | Phase 1 · 步骤 9 | 建议即拍 |
-| E1 | 生产执行：GitLab 建库（**D2 定归属组**）→ GitHub 建 private 副本（D3）→ 三条命令 → 首推对账（一并完成 GitLab 分支首推最后验证 + ci-baseline 冒烟 🔮→✅） | Phase 1 · 步骤 12 | 🔓 R1① 已解；待 D2/D3 拍板 + 网页建库 |
+| ~~**D2**~~ | 伞形 repo GitLab 归属 | Phase 1 · 步骤 12 | ✅ **已拍（2026-11-03）：不放 GitLab**——伞形=个人 GitHub 单主；数据仓群归 `da` 组（Maintainer 已获） |
+| ~~**D3**~~ | 镜像范围 | Phase 1 · 步骤 9 | ✅ 随 D2 转化：伞形无镜像问题；"数据仓→个人 GitHub 副本"变逐仓再议项（方法已验证） |
+| **D7** | 🆕 输入源 bump 机制落位（D2 架构的连锁产物）：原"GitLab 侧 Renovate bump PR"随伞形不入 GitLab 失去宿主。候选：① 内网 self-hosted runner 挂 GitHub 仓（该机需出网 github.com）② 本地脚本化 bump（`submodule update --remote` + commit + 本地跑影响分析 hooks）——影响分析可先由本地 Stop/post-bump 脚本承担 | Phase 2 · 步骤 14 | 待 E4 的 runner 情报后拍 |
+| E1 | 生产执行（简化为单主机）：**GitHub 建空 private repo**（建议名 `AIDataEngineering`；**不要**勾 README/gitignore 初始化）→ 给我 SSH 地址 → 我 `remote add` + 首推 + ci-baseline 冒烟（🔮→✅，Gitleaks+配置校验首跑） | Phase 1 · 步骤 12 | **只差你建库**（其余全就绪） |
 | E2 | CODEOWNERS 落地（覆盖 AGENTS.md 审查面六类路径） | Phase 1 · 步骤 12 + Phase 0 步骤 7 | 等 E1（repo 上有远端才能建） |
 | C2 | 靶子仓清理（ZenRay/test、da/dual-push-test，网页删；模板/方法论均已内联留底） | 收尾 | 随时，可选 |
 
@@ -42,7 +43,7 @@
 |:---:|------|------|------|
 | E3 | ~~meta 登记 nl2sql-backend~~ ✅ **已完成（5314783）**：`.meta` 建清单 + **队友两步同步真实首演成功**（clone 伞形→update→实拉 GitLab d83bb17） | Phase 2 · 步骤 13 | — |
 | E4 | GitLab CI 探针（runner 三连问；照[探针笔记 §10](./LearningNote/devops/2026-11-03-GitHub-Actions-CI可行性探针方法论.md)移植指南跑，无需新设计） | Phase 2 · 步骤 14 | 等 R1 的 runner 答案 |
-| E5 | Renovate bump PR 首跑（输入源指针更新→影响分析）；IM 通知管道 PoC（证据缺口，推断级骨架） | Phase 2 · 步骤 14 | 等 E4 |
+| E5 | bump 自动化首跑（形态依 **D7** 拍板后：Renovate-on-self-hosted 或本地脚本）；IM 通知管道 PoC（证据缺口，推断级骨架） | Phase 2 · 步骤 14 | 等 D7 + E4 |
 | **D4** | IM 通知目标选型（飞书/钉钉/Slack webhook） | Phase 2 · 步骤 14 | 随 E5 |
 | E6 | 凭据调查：成员账号对 8 输入源的原生读权限（若可读→独立只读凭据方案作废一半） | Phase 2 · 步骤 15 | 随时可查 |
 | **D5** | secrets 工具选型（sops+age 能力面已验证、完整工作流未 PoC；1Password/doppler 未对比） | Phase 2 · 步骤 15 | 触发=E6 结论为"需要" |

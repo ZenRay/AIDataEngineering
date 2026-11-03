@@ -13,7 +13,7 @@
 - `BackDocs/`：个人存档区（**长期受限目录**）：读取与修改均需用户当场确认（ask 规则逐次弹框）；
   `BackDocs/archive/` 读写均绝对禁止（deny + hooks）。不主动索引、不主动引用其内容。
 - `docs/`：项目集级文档。
-- 顶层 repo 只管文档与 Agent 配置，**不吸收任何子项目代码**。
+- 顶层 repo 只管文档与 Agent 配置，**不吸收任何子项目代码**。定位：**个人 workspace**——唯一主场 = 个人 GitHub private（不上 GitLab）；团队数据 repo 群归 GitLab `da` 组（与伞形分置），后续数据仓在 `projects/` 下按需 clone。
 
 ## 新增 repo 流程（两条路线，判据 = 我们是否向该 repo 提交代码）
 
@@ -44,7 +44,8 @@ git commit -m "chore: register data repo <name>"
 - 子仓库（submodules/、projects/ 下）的提交在其自身目录内进行，遵循其自身分支规范。
 - 不 force push、不直接推主干，除非用户明确要求。
 - meta 团队增量同步是**两步**：`git pull`（拉新 .meta 清单）→ `meta git update`（clone 本地缺失的子仓库）。`meta git update` 不会拉取清单本身。
-- 双 host（GitLab 团队主 + GitHub 个人副本，Phase 1 定案=多 push URL，仅副本 owner 机器配置、SSH URL）：非原子，push 后逐 URL 核对两侧结果；**分支 push 不携带 tag**，需同步副本时显式 `git push origin --tags`；副本 repo 不设写权限协作者（天然只读）。
+- Repo 远端与双 host：伞形 repo = **GitHub 个人单主**（无双推）。**数据 repo**：GitLab(da) 为团队主；需要个人副本时才配多 push URL（方案 A，仅副本 owner 机器、SSH URL）——非原子，push 后逐 URL 核对；**分支 push 不携带 tag**，同步副本需显式 `git push origin --tags`；副本仓不设写协作者（天然只读）。
+- 伞形仓 `.gitmodules` 指针指向内网 GitLab——`git submodule update --init` 仅在可达内网（VPN/代理）的机器可完成，GitHub 上的伞形仓副本对外网协作者不含输入源内容。
 
 ## 跨工具桥接（Codex 特别注意）
 
