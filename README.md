@@ -25,4 +25,4 @@
   - 探针载体：`ZenRay/test` @ `5060997`；**模板与完整方法论（反向断言/判读矩阵/GitLab 移植指南）已内联归档**：[CI 探针方法论笔记](./LearningNote/devops/2026-11-03-GitHub-Actions-CI可行性探针方法论.md)——靶子仓删除不影响模板存续
 - **TODO-2｜GitLab CI 暂缓项**（待两把钥匙：runner 可用性确认 + Maintainer 角色）：① Renovate bump PR 自动化（输入源 submodule 指针更新 → 触发影响分析 CI）；② IM webhook 通知管道（研究结论中的证据缺口，落地需 PoC）；③ runner 基建调研（组内现有项目如何跑 CI）。解锁后回填本表。
 - **TODO-3｜凭据管理调查**：确认团队成员账号对 8 个输入源仓库的原生读权限（若有，独立只读凭据方案作废一半）；个人 GitHub 侧凭据已实测为 SSH 路线。
-- **TODO-4｜交互式自测**（hooks 项）：新会话执行学习笔记 §6.4 清单（permissions 已实战验证；hooks 不热加载，需新会话复测 git push 弹框）。
+- ~~**TODO-4｜交互式自测**~~ ✅ **已完成（2026-11-03，笔记 v1.5）**：5/6 通过（含 direnv 双 hook 端到端实测、deny 全路径拦截实测）；push-ask 未弹框根因 = 会话处于 **bypass 模式**（官方语义：bypass 下 ask 自动放行、deny 仍强制——配置无缺陷）。**制度结论**：bypass 禁用场景 = onboarding 新人 / 未审查仓库 / 敏感 workspace；ask 弹框本体可在默认模式复验（可选尾差）。
