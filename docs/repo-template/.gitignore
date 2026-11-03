@@ -1,0 +1,24 @@
+# Python / uv
+.venv/
+__pycache__/
+*.pyc
+# uv.lock 是团队资产，必须提交（纪律：不在 .venv 手工装包，uv sync 精确同步会剪除）
+
+# Node
+node_modules/
+dist/
+
+# 环境与凭据（模板保留 .env.example 作为 schema 文档）
+.env
+.env.*
+!.env.example
+
+# 本地个人配置
+.claude/settings.local.json
+CLAUDE.local.md
+.direnv/
+
+# dbt / 数据工件（按栈需要调整）
+target/
+dbt_packages/
+logs/

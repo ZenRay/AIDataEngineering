@@ -26,12 +26,15 @@ git config -f .gitmodules submodule.submodules/<name>.ignore dirty
 git commit -m "chore: add upstream input source <name>"
 ```
 
-**主动开发的数据建设 repo** → 放 projects/ 并登记进 meta 清单（Phase 2+，需先 `npm i -g meta`）：
+**主动开发的数据建设 repo** → 以 `docs/repo-template/` 为母本实例化，登记进 meta 清单（需先 `npm i -g meta`）：
 
 ```bash
+cp -r docs/repo-template projects/<name> && rm projects/<name>/README.md   # 手工期（copier/cruft 选型后替换）
 meta project import projects/<name> <repo-url>   # 自动更新 .meta 与 .gitignore
 git commit -m "chore: register data repo <name>"
 ```
+
+分层规范见 `docs/子项目Agent配置规范.md`。
 
 > ⚠️ GitLab 首推注意：自建实例对新仓库默认分支有保护——**空仓库首次 push 需 Maintainer 角色**（与 commit 署名无关：认证=SSH key，授权=项目角色）。新 repo 首推前先解决角色或由管理员执行。
 
@@ -63,7 +66,7 @@ Claude Code / Cursor 有惰性加载机制可自动获得子目录指令，但�
 - `enableAllProjectMcpServers` / `enabledMcpjsonServers` 键（MCP 审批必须由每个成员交互完成）
 - `env` 中 `ANTHROPIC_BASE_URL` 等凭据/端点覆盖类变量
 
-**新成员 onboarding 顺序**：clone → 人工审查上述配置 → 再启动 Claude Code 并 trust（trust 前权限提示偏多属正常，deny/ask 保护已生效）。
+**新成员 onboarding 顺序**：clone → 跑 `scripts/onboarding.sh`（工具链/版本/负面清单检查 + 引导人工审查）→ 再启动 Claude Code 并 trust（trust 前权限提示偏多属正常，deny/ask 保护已生效）。制度：**本 workspace 禁用 bypass/自动接受模式**（ask 软约束会全部失效）。
 
 ## 环境工具链（已定：方案 D — direnv 路线）
 

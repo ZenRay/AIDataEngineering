@@ -10,6 +10,7 @@
 | 项 | 状态 |
 |------|------|
 | Phase 0（伞形定型/hooks 硬边界/direnv 环境路线） | ✅ 已落地（commit 1ae2a39…cc860d7） |
+| Phase 0 收尾三件（onboarding 脚本 / 子项目规范 / repo 模板内容） | ✅ 2026-11-03（`scripts/onboarding.sh`、`docs/子项目Agent配置规范.md`、`docs/repo-template/`）；仅剩 **copier/cruft 选型** 一个决策点 |
 | Phase 1（GitLab 团队主 + GitHub 个人副本，多 push URL） | 📌 定案 + 机制已验证；生产执行待 GitLab Maintainer 角色 |
 | Phase 2 meta 清单 | ✅ 前置三验已过（Node 24 / 嵌套路径 / 两步同步），待登记 nl2sql-backend |
 | GitHub CI | ✅ **已定案**（2026-11-03 探针实测）：private repo Actions 可用；托管 runner **不可达内网**——内网依赖工作负载（Renovate bump / dbt CI）不能上 GitHub hosted（TODO-1 关闭） |

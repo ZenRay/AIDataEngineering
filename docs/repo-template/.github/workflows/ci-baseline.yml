@@ -1,0 +1,32 @@
+# 正式期 CI 起步模板 —— 🔮 设计级：在首个真实 repo 上跑绿之前不得视为已验证
+# 落位依据（✅ 探针实测，见学习笔记《CI 可行性探针方法论》）：
+#   GitHub hosted runner 不可达内网 → 本文件只做"仓内自洽"检查，永不引用内网资源
+name: ci-baseline
+on: [push, pull_request]
+
+jobs:
+  validate-repo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: agent config self-check
+        run: |
+          test -f AGENTS.md && test -f CLAUDE.md && grep -q "@AGENTS.md" CLAUDE.md
+          python3 -m json.tool .claude/settings.json > /dev/null
+      - name: uv lock check（如为 uv 项目）
+        run: |
+          if [ -f pyproject.toml ]; then
+            pipx install uv || pip install uv
+            uv lock --check
+          fi
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 10 }
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
