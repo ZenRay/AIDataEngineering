@@ -12,7 +12,7 @@
 |------|------|
 | Phase 0（伞形定型/hooks 硬边界/direnv 环境/规范+模板+onboarding） | ✅ 全部落地（commits 1ae2a39…249682f），仅剩 D1/C1 两个可延项 |
 | Phase 1（GitLab 团队主 + GitHub 个人副本，多 push URL 方案 A） | 📌 定案 + 机制已端到端验证；唯一阻塞 = 现实角色问题（R1） |
-| Phase 2 meta 清单 | ✅ 前置三验已过，登记动作无硬依赖可提前（E3） |
+| Phase 2 meta 清单 | ✅ **已激活**（E3 完成，commit 5314783）：`.meta` 登记 nl2sql-backend + 队友两步同步真实首演成功；与 .gitmodules 双清单并存 |
 | GitHub CI | ✅ 探测定案（TODO-1）：Actions 可用 / hosted 不可达内网 → 落位表见探针笔记 |
 | GitLab CI | ⏸️ 暂缓（E4，待 R1 + runner 情报；移植指南现成） |
 
@@ -29,10 +29,10 @@
 
 | # | 事项 | 归属 | 触发 / 阻塞 |
 |:---:|------|------|------|
-| **R1** | 🌍 现实动作：向 GitLab 管理员一次问三件——① 伞形/数据 repo 目标组的 **Maintainer 角色** ② 组内 runner 情况 ③ mirror 策略了解 | Phase 1 · 步骤 11 | **全局钥匙**：解锁 E4/E5 + Phase 1 生产 |
+| **R1** | 🌍 现实动作：向 GitLab 管理员问三件——① Maintainer 角色 ② runner 情况 ③ mirror 策略 | Phase 1 · 步骤 11 | 🔓 **① 已获得（2026-11-03）**；②③ 随 E4 补问 |
 | **D2** | 伞形 repo 在 GitLab 的归属组（建议独立子组如 `da/ai-data-eng`，权限边界干净） | Phase 1 · 步骤 12 | 随 R1 一并定 |
 | **D3** | 镜像范围拍板（建议：起步**只镜像伞形 repo**；8 个业务输入源永不镜像=已定；数据 repo 逐个再议） | Phase 1 · 步骤 9 | 建议即拍 |
-| E1 | 生产执行：GitLab 建库 → GitHub 建 private 副本 → 副本 owner 机器三条命令 → 首推对账（**一并完成**：GitLab 分支首推最后验证 + ci-baseline 冒烟 🔮→✅） | Phase 1 · 步骤 12 | 等 R1 |
+| E1 | 生产执行：GitLab 建库（**D2 定归属组**）→ GitHub 建 private 副本（D3）→ 三条命令 → 首推对账（一并完成 GitLab 分支首推最后验证 + ci-baseline 冒烟 🔮→✅） | Phase 1 · 步骤 12 | 🔓 R1① 已解；待 D2/D3 拍板 + 网页建库 |
 | E2 | CODEOWNERS 落地（覆盖 AGENTS.md 审查面六类路径） | Phase 1 · 步骤 12 + Phase 0 步骤 7 | 等 E1（repo 上有远端才能建） |
 | C2 | 靶子仓清理（ZenRay/test、da/dual-push-test，网页删；模板/方法论均已内联留底） | 收尾 | 随时，可选 |
 
@@ -40,7 +40,7 @@
 
 | # | 事项 | 归属 | 触发 / 阻塞 |
 |:---:|------|------|------|
-| E3 | `meta project import projects/nl2sql-backend` 登记 + 本地模拟队友两步同步首跑 | Phase 2 · 步骤 13 | **无硬依赖，可提前于 Phase 1** |
+| E3 | ~~meta 登记 nl2sql-backend~~ ✅ **已完成（5314783）**：`.meta` 建清单 + **队友两步同步真实首演成功**（clone 伞形→update→实拉 GitLab d83bb17） | Phase 2 · 步骤 13 | — |
 | E4 | GitLab CI 探针（runner 三连问；照[探针笔记 §10](./LearningNote/devops/2026-11-03-GitHub-Actions-CI可行性探针方法论.md)移植指南跑，无需新设计） | Phase 2 · 步骤 14 | 等 R1 的 runner 答案 |
 | E5 | Renovate bump PR 首跑（输入源指针更新→影响分析）；IM 通知管道 PoC（证据缺口，推断级骨架） | Phase 2 · 步骤 14 | 等 E4 |
 | **D4** | IM 通知目标选型（飞书/钉钉/Slack webhook） | Phase 2 · 步骤 14 | 随 E5 |
