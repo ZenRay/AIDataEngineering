@@ -68,7 +68,7 @@ Claude Code / Cursor 有惰性加载机制可自动获得子目录指令，但�
 - `enableAllProjectMcpServers` / `enabledMcpjsonServers` 键（MCP 审批必须由每个成员交互完成）
 - `env` 中 `ANTHROPIC_BASE_URL` 等凭据/端点覆盖类变量
 
-**新成员 onboarding 顺序**：clone → 跑 `scripts/onboarding.sh`（工具链/版本/负面清单检查 + 引导人工审查）→ 再启动 Claude Code 并 trust（trust 前权限提示偏多属正常，deny/ask 保护已生效）。制度：**本 workspace 禁用 bypass/自动接受模式**（ask 软约束会全部失效）。
+**新成员 onboarding**：入口文档 = `docs/新人Onboarding与配置自检指南.md`（心智模型、安装清单、配置地图、10 项自检矩阵、故障排查、验收标准）；顺序 clone → 配别名映射 → `scripts/onboarding.sh` → 人工审查 → 启动 Claude Code 并 trust（trust 前提示偏多属正常）。制度：**本 workspace 禁用 bypass/自动接受模式**（ask 软约束会全部失效）。
 
 ## 环境工具链（已定：方案 D — direnv 路线）
 

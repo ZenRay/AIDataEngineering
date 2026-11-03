@@ -2,6 +2,7 @@
 
 数据建设项目集伞形 workspace：8 个线上业务代码仓库（只读输入源，git submodules）+ 数据建设 repo 群（meta 清单，`projects/`）+ Data Agent 基建（规划中）。
 
+- **新人从这里进**：[docs/新人Onboarding与配置自检指南.md](./docs/新人Onboarding与配置自检指南.md)（装什么/配什么/怎么验，10 项自检矩阵 + 排查表）
 - 团队/Agent 约定：[AGENTS.md](./AGENTS.md)（单一事实源，Claude Code 经 CLAUDE.md 导入）
 - 决策记录与研究证据：docs/LearningNote/（叙事层）· BackDocs/research/（证据层，读取需负责人确认）
 - TODO 编号规则：**E**=执行项、**D**=待拍板决策、**C**=收尾/清理动作；每项标注所属 Phase 与完整版 §8 步骤号
