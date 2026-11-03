@@ -22,7 +22,7 @@
   - **结论 2**：GitHub hosted runner **无法访问内网 GitLab**（探针 `intranet-unreachable-assert` 按设计通过）→ CI 工作负载落位定案：
     - **可放 GitHub Actions**：配置审查类（settings.json/AGENTS.md 校验、validate.py 笔记检查）、**Gitleaks 服务端扫描**（硬兜底）、docs 构建、不依赖内网数据的 evals 门禁
     - **不能放 GitHub hosted**：Renovate submodule bump（需拉内网上游）、dbt 连数仓 CI → 归 GitLab（TODO-2）或内网 self-hosted runner（远期，需该机出网 github.com）
-  - 探针载体：`ZenRay/test` @ `5060997`（`.github/workflows/github-ci-probe.yml`，可复用为新建 repo 的 CI 起步模板）
+  - 探针载体：`ZenRay/test` @ `5060997`；**模板与完整方法论（反向断言/判读矩阵/GitLab 移植指南）已内联归档**：[CI 探针方法论笔记](./LearningNote/devops/2026-11-03-GitHub-Actions-CI可行性探针方法论.md)——靶子仓删除不影响模板存续
 - **TODO-2｜GitLab CI 暂缓项**（待两把钥匙：runner 可用性确认 + Maintainer 角色）：① Renovate bump PR 自动化（输入源 submodule 指针更新 → 触发影响分析 CI）；② IM webhook 通知管道（研究结论中的证据缺口，落地需 PoC）；③ runner 基建调研（组内现有项目如何跑 CI）。解锁后回填本表。
 - **TODO-3｜凭据管理调查**：确认团队成员账号对 8 个输入源仓库的原生读权限（若有，独立只读凭据方案作废一半）；个人 GitHub 侧凭据已实测为 SSH 路线。
 - **TODO-4｜交互式自测**（hooks 项）：新会话执行学习笔记 §6.4 清单（permissions 已实战验证；hooks 不热加载，需新会话复测 git push 弹框）。
