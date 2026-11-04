@@ -117,6 +117,7 @@ git clone <伞形仓 GitHub 地址> AIDataEngineering && cd AIDataEngineering
 | Q5 拉仓报 `upstream:xxx does not appear to be a git repository` | 别名映射没配 | 补 §1.2-1 三条命令 |
 | Q6 新人自测全过但以前的人记录说"没弹框" | 历史环境差异（版本/模式），不是你的错 | 以你 §4 的实测为准并在笔记追加一行环境时点 |
 | Q7 Actions 红 | 模板演进/依赖了内网资源（设计上不该有） | 对照 ci-baseline："只做仓内自洽"是唯一契约 |
+| Q8 bump/fetch 时索要 HTTP 账号密码、或报 `could not read Username` | `.gitmodules` 改过（如脱敏换别名）但未同步到子模块**本机** config——fetch 用的是本机 URL | `git submodule sync` 一次即可（把 .gitmodules 的 URL 刷进各子模块本机）；本仓 2026-11-04 首次 bump 实战踩过 |
 
 ---
 
