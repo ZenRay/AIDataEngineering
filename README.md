@@ -1,6 +1,6 @@
 # AIDataEngineering
 
-数据建设项目集伞形 workspace：8 个线上业务代码仓库（只读输入源，git submodules）+ 数据建设 repo 群（meta 清单，`projects/`）+ Data Agent 基建（规划中）。
+数据建设项目集伞形 workspace：线上业务代码仓库群（只读输入源，git submodules，清单以 [`.gitmodules`](./.gitmodules) 为准）+ 数据建设 repo 群（meta 清单 `.meta`，`projects/`）+ Data Agent 基建（规划中）。
 
 - **新人从这里进**：[docs/新人Onboarding与配置自检指南.md](./docs/新人Onboarding与配置自检指南.md)（装什么/配什么/怎么验，10 项自检矩阵 + 排查表）
 - 团队/Agent 约定：[AGENTS.md](./AGENTS.md)（单一事实源，Claude Code 经 CLAUDE.md 导入）
@@ -43,7 +43,7 @@
 | E4 | GitLab CI 探针（runner 三连问；照[探针笔记 §10](./LearningNote/devops/2026-11-03-GitHub-Actions-CI可行性探针方法论.md)移植指南跑，无需新设计） | Phase 2 · 步骤 14 | 等 R1② runner 答案 |
 | E5 | bump 自动化首跑（形态依 **D7** 拍板后：Renovate-on-self-hosted 或本地脚本）；IM 通知管道 PoC（证据缺口，推断级骨架） | Phase 2 · 步骤 14 | 等 D7 + E4 |
 | **D4** | IM 通知目标选型（飞书/钉钉/Slack webhook） | Phase 2 · 步骤 14 | 随 E5 |
-| E6 | 凭据调查：成员账号对 8 输入源的原生读权限（若可读→独立只读凭据方案作废一半） | Phase 2 · 步骤 15 | 随时可查 |
+| E6 | 凭据调查：成员账号对输入源仓库（`.gitmodules` 全集）的原生读权限（若可读→独立只读凭据方案作废一半） | Phase 2 · 步骤 15 | 随时可查 |
 | **D5** | secrets 工具选型（sops+age 能力面已验证、完整工作流未 PoC；1Password/doppler 未对比） | Phase 2 · 步骤 15 | 触发=E6 结论为"需要" |
 | E7 | onboarding.sh 新人实跑（脚本已落地自测 exit 0；真人首跑属实战检验） | Phase 0 · 步骤 6 产物 | 首个新成员加入时 |
 

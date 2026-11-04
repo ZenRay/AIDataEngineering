@@ -102,7 +102,7 @@ git clone <伞形仓 GitHub 地址> AIDataEngineering && cd AIDataEngineering
 | 5 | Bash 重定向也被拦 | 让 Agent 跑 `echo a > submodules/css/x.txt` | 权限拒绝（deny 覆盖重定向目标） | §5-Q1 |
 | 6 | direnv 注入 | 让 Agent 跑 `echo $DIRENV_DIR` | 输出含本仓路径（`-`开头=已 allow） | §5-Q3 |
 | 7 | cd 跟随 | 在含 `.envrc` 的子仓里让 Agent 再跑一次 | 值变为该子目录 | §5-Q3 |
-| 8 | 清单齐 | `git submodule status` 8 行 + `meta git update` 无报错 | 全部就位；别名解析正常即 `~/.gitconfig` OK | §5-Q5 |
+| 8 | 清单齐 | `git submodule status`（行数应与 `.gitmodules` 段数一致）+ `meta git update` 无报错 | 全部就位；别名解析正常即 `~/.gitconfig` OK | §5-Q5 |
 | 9 | hooks 自身完好 | `echo '{"tool_input":{"command":"git push"}}' \| .claude/hooks/confirm-push.sh` | 打印一段含 `"permissionDecision":"ask"` 的 JSON | 装 jq！§1.1 |
 | 10 | 仓端 CI（若已接 GitHub） | push 后看 Actions | `ci-baseline` 绿 | 找负责人 |
 
