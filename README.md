@@ -12,9 +12,9 @@
 | 项 | 状态 |
 |------|------|
 | Phase 0（伞形定型/hooks 硬边界/direnv 环境/规范+模板+onboarding/**URL 脱敏**） | 🔶 **功能收敛（v1.9 修正）**：6/8 步全收口；**两项显式挂起**——D1 决策挂起（触发：第二仓 or 2027-01 先到为准）、C1 验证挂起（新终端裸起 claude 跑 hostname 看弹框，2 分钟可关闭）。此前"挂起均非欠账"的说法系收口标准掺水，已勘误 |
-| Phase 1（架构定案 v2.11：**伞形=GitHub 个人单主**，不上 GitLab；双 host 转为数据仓备选能力，方案 A 已验证） | 🚀 **首推完成**（66edfdd@GitHub）；待 Actions 冒烟目检后关账；R1① 角色已获（服务 da 组数据仓与 E4） |
+| Phase 1（架构定案 v2.11：**伞形=GitHub 个人单主**，不上 GitLab；双 host 转为数据仓备选能力，方案 A 已验证） | ✅ **伞形仓部分完成**（首推 66edfdd + CI 冒烟全绿，2026-11-04）；R1① 角色已获（服务 da 组数据仓与 E4） |
 | Phase 2 meta 清单 | ✅ **已激活**（E3 完成，commit 5314783）：`.meta` 登记 nl2sql-backend + 队友两步同步真实首演成功；与 .gitmodules 双清单并存 |
-| GitHub CI | ✅ 探测定案（TODO-1）：Actions 可用 / hosted 不可达内网 → 落位表见探针笔记 |
+| GitHub CI | ✅ 探测定案 + **伞形仓 ci-baseline 首跑全绿**（validate-configs + secret-scan，2026-11-04）：模板 🔮→✅ 转正；hosted 不可达内网 → 落位表见探针笔记 |
 | GitLab CI | ⏸️ 暂缓（E4，待 R1 + runner 情报；移植指南现成） |
 
 ## TODO 看板（按阶段分组）
@@ -32,8 +32,8 @@
 |:---:|------|------|------|
 | **R1** | 🌍 现实动作：向 GitLab 管理员问三件——①~~Maintainer 角色~~（✅ 已获）② runner 情况 ③ mirror 策略了解。**架构重定义后本项主要服务 E4/E5（CI 探针与 bump）与 da 组数据仓**，与伞形无关 | Phase 1 · 步骤 11（转 E4 前置） | ②③ 待补问 |
 | **D7** | 🆕 输入源 bump 机制落位（D2 架构的连锁产物）：原"GitLab 侧 Renovate bump PR"随伞形不入 GitLab 失去宿主。候选：① 内网 self-hosted runner 挂 GitHub 仓（该机需出网 github.com）② 本地脚本化 bump（`submodule update --remote` + commit + 本地跑影响分析 hooks）——影响分析可先由本地 Stop/post-bump 脚本承担 | Phase 2 · 步骤 14 | 待 E4 的 runner 情报后拍 |
-| E1 | ✅ **首推完成（2026-11-04，66edfdd → GitHub master）**，含定制版 ci-baseline（脱敏守卫+负面清单守卫）。⏳ 剩最后一步：网页看 [Actions](https://github.com/ZenRay/AIDataEngineering/actions) 首跑两个 job（validate-configs / secret-scan）——全绿则模板 🔮→✅、E1 关账 | Phase 1 · 步骤 12 | 待 Actions 目检 |
-| E2 | CODEOWNERS 落地（覆盖 AGENTS.md 审查面六类路径） | Phase 1 · 步骤 12 + Phase 0 步骤 7 | 等 E1（repo 上有远端才能建） |
+| ~~E1~~ | ✅ **完成（2026-11-04）**：伞形仓首推 GitHub（66edfdd→528299b master）+ ci-baseline 首跑**两 job 全绿**（validate-configs：配置自检/脱敏守卫/负面清单守卫；secret-scan：Gitleaks 全历史）→ 模板 🔮→✅ 转正 | Phase 1 · 步骤 12 | 已关闭 |
+| E2 | CODEOWNERS 落地（覆盖 AGENTS.md 审查面六类路径） | Phase 1 · 步骤 12 + Phase 0 步骤 7 | 🔓 E1 已完成，**现在可做**（单人仓价值有限，可低优先） |
 | C2 | 靶子仓清理（ZenRay/test、da/dual-push-test，网页删；模板/方法论均已内联留底） | 收尾 | 随时，可选 |
 
 ### Phase 2 · 团队协作与自动化

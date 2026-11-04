@@ -1,7 +1,7 @@
 ---
 title: GitHub Actions CI 可行性探针方法论（靶子测试）
 create_time: 2026-11-03 09:55:19
-update_time: 2026-11-03 10:05:00
+update_time: 2026-11-04 14:10:00
 category: devops
 subcategory: cicd
 documentType: tutorial
@@ -207,6 +207,7 @@ jobs:
 |------|------|------|
 | v1.0 | 2026-11-03 | 初版：靶子探针方法论 + 实测判读 + CI 落位定案 + 正式期起步模板 |
 | v1.0.1 | 2026-11-03 | 按反馈补链接：术语表内联官方文档列、§4.1 run 网页入口直链、新增 §11 参考链接（checkout ✅ 实跑 / gitleaks-action 🔮 未实跑分开标注） |
+| v1.1 | 2026-11-04 | ci-baseline 模板 🔮→✅ 转正：伞形仓首推 GitHub，两 job（validate-configs + secret-scan）全绿；§9 验证状态表对应行更新 |
 
 - 修改 §6/§7 结论前查 §9 验证表（尤其：GitHub 若对 runner 出网策略改版、内网 GitLab 增加公网入口，A2/A3 结论**必须重跑探针**——把 4.2 的 yml 再推一次靶子仓即可，10 分钟）
 - 正式期模板（§7 底部）落地跑绿后：版本历史加行、其状态从 🔮 升 ✅，并同步伞形 README TODO 板
@@ -219,7 +220,7 @@ jobs:
 | private repo Actions 可用（个人号） | ✅ 真实 run 绿灯 | 2026-11-03 GitHub ubuntu-latest | 中：组织策略/账号设置可变 | 重跑 actions-alive job |
 | hosted runner 不可达内网 GitLab | ✅ 反向断言绿灯 | 同上 + 内网无公网入口的现状 | 中：网络拓扑变更即失效 | 重跑 assert job；红灯先当安全事件处理 |
 | CI 落位表（§7） | ✅（内网侧行是"排除法"结论）| 基于上两行 | 低 | 前提变更时整体重判 |
-| 正式期 ci-baseline 模板可用 | 🔮 设计级，未跑过 | — | 高 | 伞形 repo 上 GitHub 后首 commit 实跑 |
+| 正式期 ci-baseline 模板可用 | ✅ **已转正（2026-11-04）**：伞形仓首推 GitHub，ci-baseline 两 job（validate-configs + secret-scan/Gitleaks 全历史）全绿 | GitHub private repo + ubuntu-latest，2026-11-04 | 低（首跑已证）；模板演进时重跑 |
 | GitLab 侧探针移植（§10） | ⚠️ 未开始 | — | — | TODO-2 执行时 |
 
 ## 10. GitLab 移植指南（TODO-2 时照着做）
