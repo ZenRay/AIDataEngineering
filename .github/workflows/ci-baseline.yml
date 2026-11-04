@@ -1,0 +1,41 @@
+# ci-baseline —— 伞形仓自有 CI（正式期模板 🔮→✅ 的冒烟首跑）
+# 契约：只做"仓内自洽"检查——GitHub hosted runner 不可达内网（探测定案），永不引用内网资源
+name: ci-baseline
+on: [push, pull_request]
+
+jobs:
+  validate-configs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: agent config self-check
+        run: |
+          set -e
+          test -f AGENTS.md
+          grep -q "@AGENTS.md" CLAUDE.md
+          python3 -m json.tool .claude/settings.json > /dev/null
+          bash -n .claude/hooks/*.sh
+
+      - name: desensitization guard（清单/配置零真实域名）
+        run: |
+          if git grep -q "biaoguoworks" -- .gitmodules .meta .claude/; then
+            echo "::error::.gitmodules/.meta/.claude 含真实域名——必须使用别名（upstream:/darepo:）"
+            exit 1
+          fi
+          grep -q "upstream:" .gitmodules
+
+      - name: negative list（禁 MCP 预批键 / 端点覆盖）
+        run: |
+          ! grep -Eq 'enableAllProjectMcpServers|enabledMcpjsonServers' .claude/settings.json
+          ! grep -q 'ANTHROPIC_BASE_URL' .claude/settings.json
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
