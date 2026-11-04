@@ -38,3 +38,8 @@
 	url = upstream:zeus-price-service.git
 	branch = master
 	ignore = dirty
+[submodule "submodules/casaba"]
+	path = submodules/casaba
+	url = upstream:casaba.git
+	branch = master
+	ignore = dirty
