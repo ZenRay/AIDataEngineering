@@ -16,7 +16,7 @@
 | Phase 2 meta 清单 | ✅ **已激活**（E3 完成，commit 5314783）：`.meta` 登记 nl2sql-backend + 队友两步同步真实首演成功；与 .gitmodules 双清单并存 |
 | GitHub CI | ✅ 探测定案 + **伞形仓 ci-baseline 首跑全绿**（validate-configs + secret-scan，2026-11-04）：模板 🔮→✅ 转正；hosted 不可达内网 → 落位表见探针笔记 |
 | GitLab CI | ⏸️ 暂缓（E4，待 R1 + runner 情报；移植指南现成） |
-| MCP PoC（初版） | 🔶 **配置/制度已并 master（beddb8a..bf3ed25），连通收口待验**：`.mcp.json`（MySQL+Nacos，HTTP + `${VAR}`/.env 注入）+ AGENTS 纪律 + onboarding .env 四连检；worktree 会话实测连通。**新发现（本会话活体证据）**：MCP `${VAR}` 展开读 claude 进程启动环境，SessionStart hook 前言只到 Bash——通道不对称 → 关闭路径 E10 |
+| MCP PoC（初版） | ✅ **初版收口完成（2026-11-05）**：配置/制度已并 master（beddb8a..2462c52）；E10 用户实测通过（zsh hook 补齐+裸起重启 → 双 server 连通、逐个批准、只读试调可用）；D8 已拍=风险接受（触发器：生产化/跨网访问时重议 TLS）。**沉淀发现**：MCP `${VAR}` 展开读 claude 进程启动环境，hook 前言只到 Bash——通道不对称（已入 AGENTS「启动环境要求」+ synthesis v1.2） |
 
 ## TODO 看板（按阶段分组）
 
@@ -48,12 +48,12 @@
 | **D5** | secrets 工具选型（sops+age 能力面已验证、完整工作流未 PoC；1Password/doppler 未对比） | Phase 2 · 步骤 15 | 触发=E6 结论为"需要" |
 | E7 | onboarding.sh 新人实跑（脚本已落地自测 exit 0；真人首跑属实战检验） | Phase 0 · 步骤 6 产物 | 首个新成员加入时 |
 
-### MCP PoC · 初版收口（研究记录：BackDocs/mcp-research/，读取需负责人确认）
+### MCP PoC · 初版已收口（研究记录：BackDocs/mcp-research/，读取需负责人确认）
 
 | # | 事项 | 归属 | 触发 / 阻塞 |
 |:---:|------|------|------|
-| E10 | 🧪 收口验证（~5 分钟）：`~/.zshrc` 补 `eval "$(direnv hook zsh)"` → 新终端仓库根裸起 `claude` → `/mcp` 两 server connected + **逐个交互批准**（制度禁预批）→ 各试调一个只读工具（MySQL `SELECT 1` / Nacos 读配置列表）。根因已定位：`.mcp.json` `${VAR}` 展开读进程启动环境，hook 前言只到 Bash（本会话：Bash 变量齐全、server INVALID_CONFIG）。**与 C1 同一个新终端可连测** | MCP PoC | 等你重启验证 |
-| **D8** | ⚖️ MySQL MCP 为 `http://`（内网 ack-test）：Bearer token 内网明文传输，与研究 Must#5「远程 HTTP 必须 TLS」冲突。二选一：风险接受并记录（测试环境+内网）/ 向管理员要 https 端点 | MCP PoC | E10 过后拍 |
+| ~~E10~~ | ✅ **已关闭（2026-11-05，用户实测）**：`~/.zshrc` 补 direnv hook → 新终端裸起 claude → 两 server connected、逐个交互批准、只读工具试调可用。不对称发现获双重确证（根因修复即生效）。同会话连带关闭 C1 | MCP PoC | 已关闭 |
+| ~~D8~~ | ✅ **已拍（2026-11-05）**：MySQL MCP `http://`（内网 ack-test）明文 = **风险接受并记录**（测试环境+内网）。**重议触发器：生产化接入 or 跨网访问**——届时换 https 端点 | MCP PoC | 已关闭（触发器在案） |
 
 ### Phase 3/4 · 数据开发与 Data Agent 基建
 
@@ -66,6 +66,8 @@
 ### 已关闭记录
 
 - ~~C1｜ask 弹框验证~~ ✅（2026-11-05，用户实测）：裸起会话见证工具权限弹框——ask 层得证，Phase 0 验证挂起清零；弹框与否取决于会话启动方式（harness/自动通过族可能仍不弹），详见笔记 v1.10
+- ~~E10｜MCP 初版收口验证~~ ✅（2026-11-05，用户实测）：zsh direnv hook 补齐 → 裸起重启 → 双 server 连通 + 逐个批准 + 只读试调通过；「MCP `${VAR}` 展开读进程启动环境、hook 前言只到 Bash」不对称发现入册（AGENTS 启动环境要求 + synthesis v1.2）
+- ~~D8｜MySQL MCP http 明文~~ ✅ 已拍（2026-11-05）：风险接受并记录（测试环境+内网）；重议触发器=生产化接入 or 跨网访问
 - ~~TODO-1｜GitHub CI 可行性~~ ✅ 探针双 job 全绿（2026-11-03）：Actions private 可用；hosted 不可达内网——CI 落位表见[探针方法论](./LearningNote/devops/2026-11-03-GitHub-Actions-CI可行性探针方法论.md)
 - ~~TODO-4｜交互式自测~~ ✅ 5/6 通过 + ask 未弹框根因=bypass 模式（制度：本 workspace 禁 bypass），详见伞形笔记 v1.5。⚠️ v1.7 勘误：ask 弹框本体至今未证实，复测转入 C1。
 - ~~E3｜meta 登记 nl2sql-backend~~ ✅（5314783，2026-11-03）：`.meta` 建清单 + 队友两步同步**真实首演成功**（clone 伞形→update→实拉 da 组 d83bb17）
