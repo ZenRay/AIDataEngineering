@@ -16,6 +16,7 @@
 | Phase 2 meta 清单 | ✅ **已激活**（E3 完成，commit 5314783）：`.meta` 登记 nl2sql-backend + 队友两步同步真实首演成功；与 .gitmodules 双清单并存 |
 | GitHub CI | ✅ 探测定案 + **伞形仓 ci-baseline 首跑全绿**（validate-configs + secret-scan，2026-11-04）：模板 🔮→✅ 转正；hosted 不可达内网 → 落位表见探针笔记 |
 | GitLab CI | ⏸️ 暂缓（E4，待 R1 + runner 情报；移植指南现成） |
+| MCP PoC（初版） | 🔶 **配置/制度已并 master（beddb8a..bf3ed25），连通收口待验**：`.mcp.json`（MySQL+Nacos，HTTP + `${VAR}`/.env 注入）+ AGENTS 纪律 + onboarding .env 四连检；worktree 会话实测连通。**新发现（本会话活体证据）**：MCP `${VAR}` 展开读 claude 进程启动环境，SessionStart hook 前言只到 Bash——通道不对称 → 关闭路径 E10 |
 
 ## TODO 看板（按阶段分组）
 
@@ -46,6 +47,13 @@
 | E6 | 凭据调查：成员账号对输入源仓库（`.gitmodules` 全集）的原生读权限（若可读→独立只读凭据方案作废一半） | Phase 2 · 步骤 15 | 随时可查 |
 | **D5** | secrets 工具选型（sops+age 能力面已验证、完整工作流未 PoC；1Password/doppler 未对比） | Phase 2 · 步骤 15 | 触发=E6 结论为"需要" |
 | E7 | onboarding.sh 新人实跑（脚本已落地自测 exit 0；真人首跑属实战检验） | Phase 0 · 步骤 6 产物 | 首个新成员加入时 |
+
+### MCP PoC · 初版收口（研究记录：BackDocs/mcp-research/，读取需负责人确认）
+
+| # | 事项 | 归属 | 触发 / 阻塞 |
+|:---:|------|------|------|
+| E10 | 🧪 收口验证（~5 分钟）：`~/.zshrc` 补 `eval "$(direnv hook zsh)"` → 新终端仓库根裸起 `claude` → `/mcp` 两 server connected + **逐个交互批准**（制度禁预批）→ 各试调一个只读工具（MySQL `SELECT 1` / Nacos 读配置列表）。根因已定位：`.mcp.json` `${VAR}` 展开读进程启动环境，hook 前言只到 Bash（本会话：Bash 变量齐全、server INVALID_CONFIG）。**与 C1 同一个新终端可连测** | MCP PoC | 等你重启验证 |
+| **D8** | ⚖️ MySQL MCP 为 `http://`（内网 ack-test）：Bearer token 内网明文传输，与研究 Must#5「远程 HTTP 必须 TLS」冲突。二选一：风险接受并记录（测试环境+内网）/ 向管理员要 https 端点 | MCP PoC | E10 过后拍 |
 
 ### Phase 3/4 · 数据开发与 Data Agent 基建
 

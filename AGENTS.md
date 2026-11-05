@@ -81,10 +81,11 @@ MCP（Model Context Protocol）服务器代表**任意代码执行**，工具行
 - ✅ 凭据必须通过 Authorization 头传递，**禁止**出现在 URL 查询字符串中
 - ✅ 新增 MCP 服务器前必须完成安全评估（来源、权限范围、数据传输）
 
-**当前配置**：
-- 项目级 `.mcp.json`：PostgreSQL MCP 服务器（PoC 评估阶段）
-- 凭据注入：通过 `.envrc` 中的 `POSTGRES_CONNECTION_STRING` 环境变量（占位符，实际使用时取消注释并填入真实值）
-- 传输类型：stdio（本地进程，零网络开销）
+**当前配置**（2026-11-05 PoC 初版，worktree 会话实测连通）：
+- 项目级 `.mcp.json`：`bg-mysql-mcp`（MySQL 连接器）+ `bg-nacos-mcp-test`（Nacos 配置中心），均测试环境
+- 传输类型：Streamable HTTP（远程）；凭据经 `Authorization: Bearer` 头传递
+- 凭据注入：`.mcp.json` 一律 `${VAR}` 展开；真实值只存本机 `.env`（gitignore，永不入库），`.envrc` source `.env`
+- ⚠️ **启动环境要求**：`${VAR}` 展开发生在 **claude 进程启动时**（读进程环境）；SessionStart hook 的 `CLAUDE_ENV_FILE` 前言只作用于 Bash 工具，**到不了 MCP 配置**。必须从 direnv 已加载的 shell 启动 claude（zsh 需 `~/.zshrc` 含 `eval "$(direnv hook zsh)"`），否则 server 报 INVALID_CONFIG（2026-11-05 实测：Bash 内变量齐全而 MCP 展开为空——通道不对称）
 
 **禁用配置**：
 - 🚫 `enableAllProjectMcpServers`（批量启用，违反逐一审批原则）
