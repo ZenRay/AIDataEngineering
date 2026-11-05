@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "mysql-mcp": {
+      "type": "http",
+      "url": "${MYSQL_MCP_URL}",
+      "headers": {
+        "Authorization": "Bearer ${MYSQL_MCP_TOKEN}"
+      }
+    },
     "postgres": {
       "command": "npx",
       "args": [
