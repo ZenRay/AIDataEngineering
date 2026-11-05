@@ -43,3 +43,8 @@
 	url = upstream:casaba.git
 	branch = master
 	ignore = dirty
+[submodule "submodules/finance-open"]
+	path = submodules/finance-open
+	url = scm:finance-open.git
+	branch = master
+	ignore = dirty

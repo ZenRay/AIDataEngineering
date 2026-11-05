@@ -46,13 +46,19 @@ if [ "${1:-}" != "--reviewed" ]; then
 fi
 
 echo "== 4/7 仓库 bootstrap =="
-# 伞形仓的 .gitmodules/.meta 使用 URL 别名（upstream: / upstream-user: / darepo:），
+# 伞形仓的 .gitmodules/.meta 使用 URL 别名（upstream: / upstream-user: / darepo: / scm:），
 # 真实地址只存在于每人本机的 ~/.gitconfig（insteadOf 映射，不入仓不推送）。
-# 首次配置：向伞形仓负责人索取三条 git config --global 映射命令（经内网/线下渠道传递）。
-if git config --global --get-regexp 'insteadof' 2>/dev/null | grep -q 'upstream:'; then
-  ok "URL 别名映射已配置（upstream: 可解析）"
+# 首次配置：向伞形仓负责人索取四条 git config --global 映射命令（经内网/线下渠道传递）。
+MISSING_ALIASES=""
+for a in upstream: upstream-user: darepo: scm:; do
+  if ! git config --global --get-regexp 'insteadof' 2>/dev/null | grep -q "$a"; then
+    MISSING_ALIASES="$MISSING_ALIASES $a"
+  fi
+done
+if [ -n "$MISSING_ALIASES" ]; then
+  bad "缺少 URL 别名映射 ——$MISSING_ALIASES —— submodule/meta 将无法解析！请向负责人索取对应的 insteadOf 配置命令并执行后重跑本脚本"
 else
-  bad "缺少 URL 别名映射——submodule/meta 将全部无法解析！请向负责人索取三条 insteadOf 配置命令并执行后重跑本脚本"
+  ok "URL 别名映射已配置（upstream:/upstream-user:/darepo:/scm: 全部就绪）"
 fi
 git submodule update --init --recursive && ok "submodules 初始化完成" || bad "submodule init 失败（检查内网/代理可达性与 SSH key；伞形仓用别名 URL，见上方映射检查）"
 if [ -f .meta ] && command -v meta >/dev/null; then
