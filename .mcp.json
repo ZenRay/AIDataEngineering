@@ -7,9 +7,9 @@
         "Authorization": "Bearer ${MYSQL_MCP_TOKEN}"
       }
     },
-    "nacos-mcp-j-test": {
+    "bg-nacos-mcp-test": {
       "type": "http",
-      "url": "https://mcp-nacos.biaoguoworks.com/mcp",
+      "url": "${NACOS_MCP_URL}",
       "headers": {
         "X-Nacos-Environment": "test",
         "Authorization": "Bearer ${NACOS_MCP_TOKEN}"
