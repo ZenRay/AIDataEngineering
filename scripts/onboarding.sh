@@ -47,15 +47,27 @@ else
   warn ".mcp.json 不存在（MCP PoC 评估阶段，后续按需创建）"
 fi
 
-# 检查 .envrc 中的 MCP 相关环境变量
-if grep -q 'POSTGRES_CONNECTION_STRING' .envrc 2>/dev/null; then
-  if grep -Eq 'POSTGRES_CONNECTION_STRING\s*=\s*"[^$]' .envrc 2>/dev/null; then
-    bad ".envrc 中 POSTGRES_CONNECTION_STRING 疑似硬编码（必须用占位符或外部注入）"
+# 检查 .env 文件（敏感配置）
+if [ -f .env ]; then
+  ok ".env 文件存在（敏感配置已隔离 ✓）"
+  # 检查 .env 是否被 gitignore
+  if git check-ignore .env >/dev/null 2>&1; then
+    ok ".env 已被 gitignore 忽略（安全 ✓）"
   else
-    ok ".envrc 中 MCP 环境变量配置正确（占位符/外部注入）"
+    bad ".env 未被 gitignore 忽略！请立即添加到 .gitignore（敏感信息泄露风险）"
   fi
 else
-  warn ".envrc 中未配置 POSTGRES_CONNECTION_STRING（MCP PoC 评估阶段，后续按需配置）"
+  warn ".env 文件不存在——MCP 服务器无法连接"
+  if [ -f .env.example ]; then
+    echo "    请执行: cp .env.example .env && 编辑 .env 填入真实配置"
+  fi
+fi
+
+# 检查 .envrc 是否正确引用 .env
+if grep -q 'source .env' .envrc 2>/dev/null; then
+  ok ".envrc 正确引用 .env 文件 ✓"
+else
+  bad ".envrc 未引用 .env 文件——环境变量将无法加载"
 fi
 
 echo "== 3/7 人工配置审查（不可跳过）=="
