@@ -34,6 +34,30 @@ for f in .claude/settings.json .mcp.json; do
   if grep -q 'ANTHROPIC_BASE_URL' "$f"; then bad "$f 含 ANTHROPIC_BASE_URL 端点覆盖（禁止）"; fi
 done
 
+# MCP 特定检查（2026-11 新增）
+if [ -f .mcp.json ]; then
+  ok ".mcp.json 存在（项目级 MCP 配置）"
+  # 检查是否硬编码凭据（简单的启发式检查）
+  if grep -Eq '(password|passwd|pwd|secret|api_key|apikey)\s*[:=]\s*["\x27][^$\{]' .mcp.json 2>/dev/null; then
+    bad ".mcp.json 疑似含硬编码凭据（禁止！必须用环境变量注入）"
+  else
+    ok ".mcp.json 无硬编码凭据（使用环境变量注入 ✓）"
+  fi
+else
+  warn ".mcp.json 不存在（MCP PoC 评估阶段，后续按需创建）"
+fi
+
+# 检查 .envrc 中的 MCP 相关环境变量
+if grep -q 'POSTGRES_CONNECTION_STRING' .envrc 2>/dev/null; then
+  if grep -Eq 'POSTGRES_CONNECTION_STRING\s*=\s*"[^$]' .envrc 2>/dev/null; then
+    bad ".envrc 中 POSTGRES_CONNECTION_STRING 疑似硬编码（必须用占位符或外部注入）"
+  else
+    ok ".envrc 中 MCP 环境变量配置正确（占位符/外部注入）"
+  fi
+else
+  warn ".envrc 中未配置 POSTGRES_CONNECTION_STRING（MCP PoC 评估阶段，后续按需配置）"
+fi
+
 echo "== 3/7 人工配置审查（不可跳过）=="
 echo "  trust 前需过目的文件："
 for p in .claude/settings.json .claude/hooks/*.sh .claude/skills .mcp.json .codex/config.toml scripts/onboarding.sh; do

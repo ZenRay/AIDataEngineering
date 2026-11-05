@@ -70,6 +70,37 @@ Claude Code / Cursor 有惰性加载机制可自动获得子目录指令，但�
 
 **新成员 onboarding**：入口文档 = `docs/新人Onboarding与配置自检指南.md`（心智模型、安装清单、配置地图、10 项自检矩阵、故障排查、验收标准）；顺序 clone → 配别名映射 → `scripts/onboarding.sh` → 人工审查 → 启动 Claude Code 并 trust（trust 前提示偏多属正常）。制度：**本 workspace 禁用 bypass/自动接受模式**（ask 软约束会全部失效）。
 
+## MCP 使用纪律（2026-11 新增）
+
+MCP（Model Context Protocol）服务器代表**任意代码执行**，工具行为描述应被视为不可信。基于 MCP 安全模型研究（详见 `BackDocs/mcp-research/mcp-research-synthesis.md`），制定以下纪律：
+
+**强制要求**：
+- ✅ `.mcp.json` 变更必须走 PR 审查（与 `.claude/settings.json` 同等对待）
+- ✅ 禁止在 `.mcp.json` 或 `.envrc` 中硬编码凭据（连接字符串、API key、密码）
+- ✅ HTTP 传输的 MCP 服务器必须绑定到 127.0.0.1（本地开发）或使用 TLS（远程）
+- ✅ 凭据必须通过 Authorization 头传递，**禁止**出现在 URL 查询字符串中
+- ✅ 新增 MCP 服务器前必须完成安全评估（来源、权限范围、数据传输）
+
+**当前配置**：
+- 项目级 `.mcp.json`：PostgreSQL MCP 服务器（PoC 评估阶段）
+- 凭据注入：通过 `.envrc` 中的 `POSTGRES_CONNECTION_STRING` 环境变量（占位符，实际使用时取消注释并填入真实值）
+- 传输类型：stdio（本地进程，零网络开销）
+
+**禁用配置**：
+- 🚫 `enableAllProjectMcpServers`（批量启用，违反逐一审批原则）
+- 🚫 `enabledMcpjsonServers`（预先批准列表，违反交互审批原则）
+- 🚫 未经审查的第三方 MCP 服务器
+- 🚫 令牌传递（token passthrough）——每个 MCP 服务器必须验证自己的令牌
+
+**Onboarding 检查**：
+新成员必须执行 `scripts/onboarding.sh` 中的 MCP 配置验证步骤（检查 `.mcp.json` 存在、`.envrc` 配置完整、无硬编码凭据）。
+
+**技术细节**（详见研究报告）：
+- 协议版本：MCP 2026-07-28（无状态架构）
+- 传输机制：stdio（本地）/ Streamable HTTP（远程）
+- 安全模型：Origin 头验证、OAuth 2.1（HTTP）、每客户端同意流程
+- 防御层级：机制层（settings.json）+ 保安层（hooks）+ 指令层（本文件）
+
 ## 环境工具链（已定：方案 D — direnv 路线）
 
 **分工**（决策依据见 BackDocs/research 研究文档 §4，mise 因官方不支持与 direnv 共存而出局）：
