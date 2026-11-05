@@ -1,21 +1,18 @@
 {
   "mcpServers": {
-    "mysql-mcp": {
+    "bg-mysql-mcp": {
       "type": "http",
       "url": "${MYSQL_MCP_URL}",
       "headers": {
         "Authorization": "Bearer ${MYSQL_MCP_TOKEN}"
       }
     },
-    "postgres": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-postgres",
-        "${POSTGRES_CONNECTION_STRING}"
-      ],
-      "env": {
-        "POSTGRES_CONNECTION_STRING": "${POSTGRES_CONNECTION_STRING}"
+    "nacos-mcp-j-test": {
+      "type": "http",
+      "url": "https://mcp-nacos.biaoguoworks.com/mcp",
+      "headers": {
+        "X-Nacos-Environment": "test",
+        "Authorization": "Bearer ${NACOS_MCP_TOKEN}"
       }
     }
   }
