@@ -7,6 +7,11 @@ BackDocs/
 # direnv 本地缓存（.envrc 本身提交，缓存不提交）
 .direnv/
 
+# 环境变量文件（包含敏感信息，不提交）
+.env
+.env.local
+.env.*.local
+
 # 个人本地配置（永不提交）
 .claude/settings.local.json
 CLAUDE.local.md
