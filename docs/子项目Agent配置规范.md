@@ -27,8 +27,10 @@
 
 ```bash
 # ① 以模板实例化（copier/cruft 选型前：手工复制；选型后：copier copy <模板仓 URL> projects/<name> --VCS-ref latest 或 cruft create）
-cp -r docs/repo-template projects/<name> && rm -rf projects/<name>/README-TEMPLATE.md  # 手工期
-# ② 填内容：AGENTS.md 写本 repo 差异；settings.json allow 本工具链高频命令
+cp -r docs/repo-template projects/<name> && rm -f projects/<name>/README.md  # 手工期（亦可改写为项目 README 代替删除）
+# ② 填内容——按 docs/repo-template/README.md「实例化」节完整清单逐项打勾，勿只做表层步骤：
+#    AGENTS.md 写本 repo 差异；settings.json allow 增补本工具链高频命令（deny 不动）；
+#    pyproject 改 name/依赖后 uv lock；核对 gitleaks rev
 # ③ 登记与提交
 git -C projects/<name> init && git -C projects/<name> remote add origin <url>
 meta project import projects/<name> <url> && git commit -m "chore: register data repo <name>"

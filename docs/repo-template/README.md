@@ -35,5 +35,17 @@
 
 ## 实例化
 
-- **当前（手工期）**：`cp -r docs/repo-template projects/<name>`，删除本 README，改 `pyproject.toml` name/description/依赖后运行 `uv lock`（生成初始锁文件，CI `uv lock --check` 门禁要求入库），在仓目录 `direnv allow`，按规范 §3 走完登记与提交
-- **选型后（自动期）**：本目录将转为 copier（或 cruft/cookiecutter）模板仓——获得 `copier update` / `cruft update + cruft check` 的更新传播与 CI 漂移门禁。选型待定（TODO）。
+**当前（手工期）完整清单**（与规范 §3 对应；逐项完成，勿只做表层步骤——2026-11-07 code-parser 实例化曾漏掉第 3、7 步）：
+
+1. `cp -r docs/repo-template projects/<name>`
+2. **填 AGENTS.md**：写本 repo 差异（技术栈/常用命令/目录结构/本 repo 纪律/验证标注），不得保留模板占位注释
+3. **调 `.claude/settings.json`**：allow 在模板基线（uv/git 只读）之上增补本工具链高频命令（例：`Bash(sqlite3:*)`）；deny 三条不动
+4. **README 处理**：删除本 README，或改写为项目 README
+5. **`pyproject.toml`**：改 name/description/依赖 → `uv lock`（初始锁文件必须入库，CI `uv lock --check` 门禁要求）
+6. **`.python-version`**：确认版本 pin 与 CI `setup-python` 一致（如需精确到补丁版本可写 3.12.x）
+7. **核对 gitleaks rev**：`.pre-commit-config.yaml` 的 rev 对照 gitleaks 最新 release
+8. 仓目录 `direnv allow`
+9. `git init` + remote + 首推（GitLab 首推需 Maintainer 角色，见伞形 AGENTS.md）
+10. `meta project import projects/<name> <url>` + 伞形仓提交 `chore: register data repo <name>`
+
+**选型后（自动期）**：本目录将转为 copier（或 cruft/cookiecutter）模板仓——获得 `copier update` / `cruft update + cruft check` 的更新传播与 CI 漂移门禁。选型待定（TODO）。
