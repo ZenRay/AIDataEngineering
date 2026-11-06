@@ -14,6 +14,22 @@
 | `.pre-commit-config.yaml` | gitleaks 体验层 | ⚠️ rev 需核对 |
 | `.github/workflows/ci-baseline.yml` | 正式期 CI（只做仓内自洽检查，不碰内网） | 🔮 首跑转正 |
 
+## 语言基线（可选参考）
+
+**原则：规范本体 = 仓内工具配置**（formatter/linter 进各语言配置文件），本节只做选型指针——实例化时按仓语言复制基线配置，不另抄规范正文。
+
+| 语言 | 格式化 | Lint | 配置锚点 |
+|---|---|---|---|
+| Python | ruff format | ruff（`select = ["E","F","I","N","W"]`、line-length 100 起步） | `pyproject.toml [tool.ruff]`（data-warehouse 已验证基线） |
+| TypeScript / JavaScript | Prettier | ESLint（+ typescript-eslint） | `.prettierrc` / `eslint.config.js` |
+| Java | Spotless + google-java-format | Checkstyle | `pom.xml` 插件段 |
+| Go | gofmt / goimports | golangci-lint | `.golangci.yml` |
+| SQL | sqlfluff（显式 dialect） | sqlfluff | `.sqlfluff` |
+
+**代码语言约定**：注释与 docstring 一律英文；中文仅用于面向人的 page 文档（README、docs 站点、学习笔记）。
+
+**提交规范**：跟随伞形 AGENTS.md「提交规范」节（英文 subject、Conventional Commits、无机器人尾注、固定格式提交）；团队数据仓自有规范时优先。
+
 ## 实例化
 
 - **当前（手工期）**：`cp -r docs/repo-template projects/<name>`，删除本 README，按规范 §3 走完登记与提交

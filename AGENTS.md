@@ -48,6 +48,19 @@ git commit -m "chore: register data repo <name>"
 - **URL 脱敏（入库前既定）**：`.gitmodules`/`.meta` 一律使用别名前缀（`upstream:`=输入源组、`upstream-user:`=user 组、`darepo:`=数据仓组），真实域名只存在于各机器本机的 `~/.gitconfig`（`url.*.insteadOf` 映射，永不入库/推送）。新机器首次配置：向负责人索取三条 `git config --global` 映射命令（走内网/线下渠道）；`scripts/onboarding.sh` 会检查该映射。**改过 `.gitmodules` 的 URL 后，每台机器须跑一次 `git submodule sync`**——否则子模块本机仍用旧 URL（2026-11-04 首次 bump 实战踩过，指南 Q8）。
 - 伞形仓 `.gitmodules` 指针最终指向内网 GitLab——`git submodule update --init` 仅在可达内网（VPN/代理）且已配映射的机器可完成。
 
+### 提交规范（伞形仓与数据仓通用；团队数据仓自有规范时从其规范）
+
+- 格式：`<type>(<scope>): <English subject>`——**subject 用英文**（祈使语气、无句号）；body 可选，可用中文。
+- type 白名单：`feat / fix / docs / chore / refactor / revert`；安全类提交收编为 `fix(security):` / `chore(security):`；Merge 提交保留 git 默认生成。
+- scope 可选；下列固定格式提交必带（CI 影响分析将依赖其解析）。
+- **无机器人尾注**：commit message 不写 Co-Authored-By / Generated-with 类 trailer（对所有 Agent 生效）。
+- 固定格式（三类特殊提交）：
+  - 新增只读输入源：`chore: add upstream input source <name>`
+  - 注册数据仓：`chore: register data repo <name>`
+  - submodule 指针 bump：`chore(submodules): bump <name> to <short-sha>`（单独 bump 提交/PR，CI 接入后据此运行影响分析）
+- 强制层：单人期为指令层软约束（不引入 commitlint/hook）；规范只约束增量，**不改写存量历史**。
+- 代码工件语言：代码内**注释与 docstring 一律英文**；中文仅用于面向人的文档（README/docs/学习笔记）。各语言工具基线见 `docs/repo-template/README.md`「语言基线」节。
+
 ## 跨工具桥接（Codex 特别注意）
 
 Codex **不会**自动读取子目录的嵌套 AGENTS.md（只拼接项目根→启动目录链）：
