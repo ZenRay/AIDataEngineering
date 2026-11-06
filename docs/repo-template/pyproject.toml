@@ -1,0 +1,22 @@
+# uv 项目脚手架 —— 实例化时：改 name/description、按需增删依赖，然后 `uv lock` 生成初始锁文件（CI `uv lock --check` 要求入库）
+# 纪律（伞形 AGENTS.md 方案 D）：依赖变更一律走本文件 + uv lock；禁止在 .venv 手工 pip install（会被下次 uv sync 剪除）
+[project]
+name = "repo-name"            # 实例化时必改
+version = "0.1.0"
+description = "TODO: 一句话描述本 repo"
+requires-python = ">=3.12"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "pytest>=8.0",
+    "ruff>=0.6",
+]
+
+# ── 语言基线（Python，data-warehouse 已验证；选型依据见 README「语言基线」节）──
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
