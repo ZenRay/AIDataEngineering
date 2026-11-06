@@ -21,6 +21,12 @@ jobs:
             pipx install uv || pip install uv
             uv lock --check
           fi
+      - name: pytest（tests/ 存在且非空时）
+        run: |
+          if [ -f pyproject.toml ] && [ -d tests ] && [ -n "$(ls -A tests)" ]; then
+            pipx install uv || pip install uv
+            uv run pytest
+          fi
 
   secret-scan:
     runs-on: ubuntu-latest

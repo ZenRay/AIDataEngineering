@@ -20,3 +20,15 @@ target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "N", "W"]
+
+# ── 测试基线（硬约束；目录结构与规则见 README「测试基线」节）──
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "--strict-markers"
+markers = [
+    "unit: 模块内单元测试（无外部资源）",
+    "integration: 跨模块或外部资源（DB/文件IO/网络）测试",
+]

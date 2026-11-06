@@ -33,6 +33,39 @@
 
 **提交规范**：跟随伞形 AGENTS.md「提交规范」节（英文 subject、Conventional Commits、无机器人尾注、固定格式提交）；团队数据仓自有规范时优先。
 
+## 测试基线（硬约束）
+
+**原则：测试代码模块化管理，镜像源码模块树**——不是"按文件平铺测试"。源码根不做 `src/` 预设（镜像对象 = 本仓实际源码模块，无论位于 `src/<pkg>/`、`common/`、`domains/` 等）。
+
+### 目录结构
+
+```
+tests/
+├── conftest.py                  # 全局 fixture
+├── unit/                        # 单元测试：一一镜像源码模块结构
+│   └── <module>/                # ↔ 源码模块目录
+│       ├── conftest.py          # 模块级 fixture（可选）
+│       └── test_<源文件名>.py    # ↔ 源文件同名对应
+└── integration/                 # 跨模块 / 外部资源（DB、文件 IO、网络）测试
+```
+
+### 硬规则
+
+1. 新增源码模块 ⇒ 同一提交内建对应 `tests/unit/<module>/`；新增源文件 ⇒ 对应 `test_<文件名>.py`
+2. `tests/` 根目录**禁止平铺**测试文件（冒烟测试归入 `unit/` 或 `integration/` 并打对应 marker）
+3. 每个测试必须打 marker：`@pytest.mark.unit` 或 `@pytest.mark.integration`（`--strict-markers` 拒绝未注册 marker）
+4. 分层运行：`uv run pytest -m unit`（快反馈，无外部资源）／`uv run pytest`（全量）
+5. CI 门禁：ci-baseline 的 pytest 步骤在 `tests/` 非空时自动执行（无测试的新仓不报错）
+
+### 非 Python 栈（框架不同，镜像原则不变）
+
+| 栈 | 测试框架 | 镜像落点 |
+|---|---|---|
+| Java | JUnit + Maven Surefire | `src/test/java/` 镜像 `src/main/java/` 包结构（Maven 原生约定，天然满足） |
+| TS/JS | vitest / jest | `tests/` 镜像 src 模块，或 colocated `__tests__/` |
+| Go | 原生 testing | `_test.go` 同包 colocated（语言惯例，天然满足） |
+| dbt/SQL | dbt test | schema tests 写进模型同级 yml，随模型走 |
+
 ## 实例化
 
 **当前（手工期）完整清单**（与规范 §3 对应；逐项完成，勿只做表层步骤——2026-11-07 code-parser 实例化曾漏掉第 3、7 步）：
