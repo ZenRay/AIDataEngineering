@@ -78,7 +78,7 @@ tests/
 6. **`.python-version`**：确认版本 pin 与 CI `setup-python` 一致（如需精确到补丁版本可写 3.12.x）
 7. **核对 gitleaks rev**：`.pre-commit-config.yaml` 的 rev 对照 gitleaks 最新 release
 8. 仓目录 `direnv allow`
-9. `git init` + remote + 首推（GitLab 首推需 Maintainer 角色，见伞形 AGENTS.md）
+9. `git init -b master`（**默认分支统一 master**；存量仓历史分支名不改）+ remote + 首推（GitLab 首推需 Maintainer 角色，见伞形 AGENTS.md）
 10. `meta project import projects/<name> <url>` + 伞形仓提交 `chore: register data repo <name>`
 
 **选型后（自动期）**：本目录将转为 copier（或 cruft/cookiecutter）模板仓——获得 `copier update` / `cruft update + cruft check` 的更新传播与 CI 漂移门禁。选型待定（TODO）。

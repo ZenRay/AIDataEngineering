@@ -43,6 +43,7 @@ git commit -m "chore: register data repo <name>"
 - 任何 commit/push 前先执行 `git rev-parse --show-toplevel` 确认所在仓库（有 Agent 跨仓库提交到错误仓库的官方事故先例）。
 - 子仓库（submodules/、projects/ 下）的提交在其自身目录内进行，遵循其自身分支规范。
 - 不 force push、不直接推主干，除非用户明确要求。
+- **默认分支**：伞形仓与新建数据仓的默认分支统一为 `master`（`git init -b master`）；上游 submodule 统一跟踪 master。存量仓的历史分支名（如 data-warehouse 的 main）保持不改，各仓分支模型写入其自身 AGENTS.md。
 - meta 团队增量同步是**两步**：`git pull`（拉新 .meta 清单）→ `meta git update`（clone 本地缺失的子仓库）。`meta git update` 不会拉取清单本身。
 - Repo 远端与双 host：伞形 repo = **GitHub 个人单主**（无双推）。**数据 repo**：GitLab(da) 为团队主；需要个人副本时才配多 push URL（方案 A，仅副本 owner 机器、SSH URL）——非原子，push 后逐 URL 核对；**分支 push 不携带 tag**，同步副本需显式 `git push origin --tags`；副本仓不设写协作者（天然只读）。
 - **URL 脱敏（入库前既定）**：`.gitmodules`/`.meta` 一律使用别名前缀（`upstream:`=输入源组、`upstream-user:`=user 组、`darepo:`=数据仓组），真实域名只存在于各机器本机的 `~/.gitconfig`（`url.*.insteadOf` 映射，永不入库/推送）。新机器首次配置：向负责人索取三条 `git config --global` 映射命令（走内网/线下渠道）；`scripts/onboarding.sh` 会检查该映射。**改过 `.gitmodules` 的 URL 后，每台机器须跑一次 `git submodule sync`**——否则子模块本机仍用旧 URL（2026-11-04 首次 bump 实战踩过，指南 Q8）。

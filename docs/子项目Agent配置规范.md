@@ -32,7 +32,7 @@ cp -r docs/repo-template projects/<name> && rm -f projects/<name>/README.md  # �
 #    AGENTS.md 写本 repo 差异；settings.json allow 增补本工具链高频命令（deny 不动）；
 #    pyproject 改 name/依赖后 uv lock；核对 gitleaks rev
 # ③ 登记与提交
-git -C projects/<name> init && git -C projects/<name> remote add origin <url>
+git -C projects/<name> init -b master && git -C projects/<name> remote add origin <url>  # 默认分支统一 master（存量仓不改名）
 meta project import projects/<name> <url> && git commit -m "chore: register data repo <name>"
 ```
 

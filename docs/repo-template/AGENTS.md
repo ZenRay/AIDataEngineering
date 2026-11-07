@@ -9,7 +9,7 @@
 <!-- 例：src/ 源码｜tests/ 测试｜dbt/ models... -->
 
 ## 本 repo 纪律
-<!-- 例：dbt 模型改动必须带 test；测试硬镜像（tests/unit/<module>/ ↔ 源码模块，新增模块必须带测试目录，见模板 README「测试基线」）；禁止手工 pip install（uv sync 会剪除）；分支模型 main + PR -->
+<!-- 例：dbt 模型改动必须带 test；测试硬镜像（tests/unit/<module>/ ↔ 源码模块，新增模块必须带测试目录，见模板 README「测试基线」）；禁止手工 pip install（uv sync 会剪除）；分支模型 master + PR -->
 
 ## 验证标注
 <!-- 沿用项目集体系：✅ 已验证 / ⚠️ 未验证 / 🔮 推断 /【待实测】 -->
