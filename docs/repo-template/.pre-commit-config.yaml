@@ -1,8 +1,8 @@
 # pre-commit：体验层便利，不是合规边界（客户端可 SKIP=gitleaks 绕过——已验证结论）
 # 服务端硬兜底见 .github/workflows/ci-baseline.yml 的 secret-scan job
-# ⚠️ rev 为提取级版本号，首跑前核对 gitleaks releases 并更新
+# rev 已于 2026-11-07 核对上游（当时最新 v8.30.1）；实例化新仓时按 README 清单第 7 步复核
 repos:
   - repo: https://github.com/gitleaks/gitleaks
-    rev: v8.24.2
+    rev: v8.30.1
     hooks:
       - id: gitleaks

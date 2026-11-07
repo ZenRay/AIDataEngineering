@@ -14,7 +14,7 @@
 | `.python-version` | uv Python 版本 pin（与 CI 3.12 对齐） | 按仓调整，改后 `uv sync` |
 | `pyproject.toml` | uv 项目脚手架 + ruff 基线（语言基线的落点） | 实例化改 name/依赖后 `uv lock` |
 | `.gitignore` | venv/env/local 配置一律不入库；`uv.lock` 必须入库 | 基本不动 |
-| `.pre-commit-config.yaml` | gitleaks 体验层 | ⚠️ rev 需核对 |
+| `.pre-commit-config.yaml` | gitleaks 体验层 | ✅ rev 已核对 v8.30.1（2026-11-07） |
 | `.github/workflows/ci-baseline.yml` | 正式期 CI（只做仓内自洽检查，不碰内网） | 🔮 首跑转正 |
 
 ## 语言基线（可选参考）
