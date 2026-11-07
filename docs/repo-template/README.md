@@ -15,7 +15,7 @@
 | `pyproject.toml` | uv 项目脚手架 + ruff 基线（语言基线的落点） | 实例化改 name/依赖后 `uv lock` |
 | `.gitignore` | venv/env/local 配置一律不入库；`uv.lock` 必须入库 | 基本不动 |
 | `.pre-commit-config.yaml` | gitleaks 体验层 | ✅ rev 已核对 v8.30.1（2026-11-07） |
-| `.github/workflows/ci-baseline.yml` | GitHub CI（只做仓内自洽检查，不碰内网）；与 `.gitlab-ci.yml` 按托管平台二选一 | 🔮 首跑转正 |
+| `.github/workflows/ci-baseline.yml` | GitHub CI（只做仓内自洽检查，不碰内网）；与 `.gitlab-ci.yml` 的去留策略实例化时**经用户确认**（清单第 10 步） | 🔮 首跑转正 |
 | `.gitlab-ci.yml` | GitLab CI 基线（等价四门禁：config 自检 / uv lock / pytest / gitleaks） | 🔮 探针验证后转正 |
 
 ## 语言基线（可选参考）
@@ -82,7 +82,7 @@ tests/
 7. **核对 gitleaks rev**：`.pre-commit-config.yaml` 的 rev 对照 gitleaks 最新 release
 8. 仓目录 `direnv allow`
 9. `git init -b master`（**默认分支统一 master**；存量仓历史分支名不改）+ remote + 首推（GitLab 首推需 Maintainer 角色，见伞形 AGENTS.md）
-10. **CI 按托管平台二选一**：GitLab 仓删 `.github/`，先推最小探针 pipeline 摸清 runner/镜像现实，再按需裁剪 `.gitlab-ci.yml`；GitHub 仓删 `.gitlab-ci.yml`
+10. **CI 文件去留——向用户确认策略，勿自行决定**：二选一，或两份同时保留（镜像/双 host 场景建议保留：平台不执行的文件会被自然忽略，成本可忽略）。若二选一：GitLab 仓删 `.github/`，GitHub 仓删 `.gitlab-ci.yml`。GitLab 落地前先推最小探针 pipeline 摸清 runner/镜像现实，再按需裁剪 `.gitlab-ci.yml`（裁剪决定写入该仓 AGENTS.md）
 11. `meta project import projects/<name> <url>` + 伞形仓提交 `chore: register data repo <name>`
 
 **选型后（自动期）**：本目录将转为 copier（或 cruft/cookiecutter）模板仓——获得 `copier update` / `cruft update + cruft check` 的更新传播与 CI 漂移门禁。选型待定（TODO）。

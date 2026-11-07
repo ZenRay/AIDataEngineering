@@ -1,4 +1,4 @@
-# GitLab CI 基线 —— 与 .github/workflows/ci-baseline.yml 等价（按托管平台二选一，删除另一份）
+# GitLab CI 基线 —— 与 .github/workflows/ci-baseline.yml 等价；去留策略（二选一或并存）实例化时经用户确认，勿自行删除
 # 🔮 设计级：首个真实 repo 跑绿前不得视为已验证；落地前先推最小探针 pipeline 摸清
 #   runner 可用性 / executor 类型 / 镜像拉取（方法论见 LearningNote devops《CI 可行性探针方法论》，换平台/换网络域同样适用）
 # 原则：只做仓内自洽检查；模板只提供基线——具体仓按需裁剪/扩展，裁剪决定写入该仓 AGENTS.md
