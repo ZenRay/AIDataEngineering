@@ -15,7 +15,8 @@
 | `pyproject.toml` | uv 项目脚手架 + ruff 基线（语言基线的落点） | 实例化改 name/依赖后 `uv lock` |
 | `.gitignore` | venv/env/local 配置一律不入库；`uv.lock` 必须入库 | 基本不动 |
 | `.pre-commit-config.yaml` | gitleaks 体验层 | ✅ rev 已核对 v8.30.1（2026-11-07） |
-| `.github/workflows/ci-baseline.yml` | 正式期 CI（只做仓内自洽检查，不碰内网） | 🔮 首跑转正 |
+| `.github/workflows/ci-baseline.yml` | GitHub CI（只做仓内自洽检查，不碰内网）；与 `.gitlab-ci.yml` 按托管平台二选一 | 🔮 首跑转正 |
+| `.gitlab-ci.yml` | GitLab CI 基线（等价四门禁：config 自检 / uv lock / pytest / gitleaks） | 🔮 探针验证后转正 |
 
 ## 语言基线（可选参考）
 
@@ -49,11 +50,13 @@ tests/
 └── integration/                 # 跨模块 / 外部资源（DB、文件 IO、网络）测试
 ```
 
+**布局变体（每仓二选一，写入该仓 AGENTS.md）**：`tests/unit/<module>/` 两层布局（上图），或 `tests/<module>/` 直接镜像（code-parser 已验证形态，与 `tests/integration/` 并列）。marker 打标可逐测试标注，或用 conftest `pytest_collection_modifyitems` 按路径自动打标（参考实现见 code-parser `tests/conftest.py`）。
+
 ### 硬规则
 
-1. 新增源码模块 ⇒ 同一提交内建对应 `tests/unit/<module>/`；新增源文件 ⇒ 对应 `test_<文件名>.py`
-2. `tests/` 根目录**禁止平铺**测试文件（冒烟测试归入 `unit/` 或 `integration/` 并打对应 marker）
-3. 每个测试必须打 marker：`@pytest.mark.unit` 或 `@pytest.mark.integration`（`--strict-markers` 拒绝未注册 marker）
+1. 新增源码模块 ⇒ 同一提交内建对应模块镜像目录（`tests/unit/<module>/` 或 `tests/<module>/`，随本仓布局）；新增源文件 ⇒ 对应 `test_<文件名>.py`
+2. `tests/` 根目录**禁止平铺**测试文件（例外：包根源文件——`__init__.py`/`main.py` 等——的对应测试可放 tests/ 根，须在本仓 AGENTS.md 注明）
+3. 每个测试必须归属 marker：`unit` 或 `integration`——手工标注或 conftest 路径自动打标均可（`--strict-markers` 拒绝未注册 marker）
 4. 分层运行：`uv run pytest -m unit`（快反馈，无外部资源）／`uv run pytest`（全量）
 5. CI 门禁：ci-baseline 的 pytest 步骤在 `tests/` 非空时自动执行（无测试的新仓不报错）
 
@@ -79,6 +82,7 @@ tests/
 7. **核对 gitleaks rev**：`.pre-commit-config.yaml` 的 rev 对照 gitleaks 最新 release
 8. 仓目录 `direnv allow`
 9. `git init -b master`（**默认分支统一 master**；存量仓历史分支名不改）+ remote + 首推（GitLab 首推需 Maintainer 角色，见伞形 AGENTS.md）
-10. `meta project import projects/<name> <url>` + 伞形仓提交 `chore: register data repo <name>`
+10. **CI 按托管平台二选一**：GitLab 仓删 `.github/`，先推最小探针 pipeline 摸清 runner/镜像现实，再按需裁剪 `.gitlab-ci.yml`；GitHub 仓删 `.gitlab-ci.yml`
+11. `meta project import projects/<name> <url>` + 伞形仓提交 `chore: register data repo <name>`
 
 **选型后（自动期）**：本目录将转为 copier（或 cruft/cookiecutter）模板仓——获得 `copier update` / `cruft update + cruft check` 的更新传播与 CI 漂移门禁。选型待定（TODO）。

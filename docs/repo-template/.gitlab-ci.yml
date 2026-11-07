@@ -1,0 +1,38 @@
+# GitLab CI 基线 —— 与 .github/workflows/ci-baseline.yml 等价（按托管平台二选一，删除另一份）
+# 🔮 设计级：首个真实 repo 跑绿前不得视为已验证；落地前先推最小探针 pipeline 摸清
+#   runner 可用性 / executor 类型 / 镜像拉取（方法论见 LearningNote devops《CI 可行性探针方法论》，换平台/换网络域同样适用）
+# 原则：只做仓内自洽检查；模板只提供基线——具体仓按需裁剪/扩展，裁剪决定写入该仓 AGENTS.md
+stages: [validate, scan]
+
+agent-config-check:
+  stage: validate
+  image: python:3.12-slim
+  script:
+    - test -f AGENTS.md && test -f CLAUDE.md && grep -q "@AGENTS.md" CLAUDE.md
+    - python3 -m json.tool .claude/settings.json > /dev/null
+
+uv-lock-check:
+  stage: validate
+  image: python:3.12-slim
+  script:
+    - |
+      if [ -f pyproject.toml ]; then
+        pip install --quiet uv
+        uv lock --check
+      fi
+
+pytest:
+  stage: validate
+  image: python:3.12-slim
+  script:
+    - |
+      if [ -f pyproject.toml ] && [ -d tests ] && [ -n "$(ls -A tests)" ]; then
+        pip install --quiet uv
+        uv run pytest
+      fi
+
+secret-scan:
+  stage: scan
+  image: zricethezav/gitleaks:latest   # 内网拉不动时改 ghcr.io/gitleaks/gitleaks 或内部镜像
+  script:
+    - gitleaks detect --redact --exit-code 1   # 默认扫全历史；大仓可用 --log-opts 限定范围
