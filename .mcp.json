@@ -1,10 +1,17 @@
 {
   "mcpServers": {
-    "bg-mysql-mcp": {
+    "bg-mysql-mcp-prod": {
       "type": "http",
       "url": "${MYSQL_MCP_URL}",
       "headers": {
         "Authorization": "Bearer ${MYSQL_MCP_TOKEN}"
+      }
+    },
+    "bg-mysql-mcp-test": {
+      "type": "http",
+      "url": "${MYSQL_MCP_URL_TEST}",
+      "headers": {
+        "Authorization": "Bearer ${MYSQL_MCP_TOKEN_TEST}"
       }
     },
     "bg-nacos-mcp-test": {
@@ -14,6 +21,10 @@
         "X-Nacos-Environment": "test",
         "Authorization": "Bearer ${NACOS_MCP_TOKEN}"
       }
+    },
+    "gitlab": {
+      "type": "http",
+      "url": "${GITLAB_MCP_URL}"
     }
   }
 }

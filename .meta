@@ -1,5 +1,7 @@
 {
   "projects": {
-    "projects/nl2sql-backend": "darepo:nl2sql-backend.git"
+    "projects/nl2sql-backend": "darepo:nl2sql-backend.git",
+    "projects/data-warehouse": "darepo:data-warehouse.git",
+    "projects/code-parser": "darepo:code-parser.git"
   }
 }

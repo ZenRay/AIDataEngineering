@@ -1,0 +1,25 @@
+# 代码审查规则
+# 所有变更需要至少一个审查者
+
+# 默认：所有文件需要审查
+* @ZenRay
+
+# Agent 配置变更需要特别关注（安全红线）
+AGENTS.md @ZenRay
+CLAUDE.md @ZenRay
+.claude/ @ZenRay
+
+# 基础设施变更
+.gitmodules @ZenRay
+.meta @ZenRay
+.gitignore @ZenRay
+
+# 文档变更可以自审
+docs/LearningNote/ @ZenRay
+README.md @ZenRay
+
+# 输入源配置（高风险）
+submodules/ @ZenRay
+
+# 数据仓注册（高风险）
+projects/ @ZenRay

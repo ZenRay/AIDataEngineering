@@ -48,3 +48,68 @@
 	url = scm:finance-open.git
 	branch = master
 	ignore = dirty
+[submodule "submodules/starfruit"]
+	ignore = dirty
+	path = submodules/starfruit
+	url = upstream:starfruit.git
+	branch = master
+[submodule "submodules/ume"]
+	ignore = dirty
+	path = submodules/ume
+	url = upstream:ume.git
+	branch = master
+[submodule "submodules/demeter-copartner"]
+	ignore = dirty
+	path = submodules/demeter-copartner
+	url = upstream:demeter-copartner.git
+	branch = master
+[submodule "submodules/demeter-coupon"]
+	ignore = dirty
+	path = submodules/demeter-coupon
+	url = upstream:demeter-coupon.git
+	branch = master
+[submodule "submodules/goods-standard"]
+	ignore = dirty
+	path = submodules/goods-standard
+	url = upstream:goods-standard.git
+	branch = master
+[submodule "submodules/oms-service"]
+	ignore = dirty
+	path = submodules/oms-service
+	url = scm:oms-service.git
+	branch = master
+[submodule "submodules/wms-service"]
+	ignore = dirty
+	path = submodules/wms-service
+	url = scm:wms-service.git
+	branch = master
+[submodule "submodules/crm"]
+	ignore = dirty
+	path = submodules/crm
+	url = upstream:crm.git
+	branch = master
+[submodule "submodules/micros-robot-service"]
+	ignore = dirty
+	path = submodules/micros-robot-service
+	url = upstream:micros-robot-service.git
+	branch = master
+[submodule "submodules/risk"]
+	ignore = dirty
+	path = submodules/risk
+	url = upstream:risk.git
+	branch = master
+[submodule "submodules/task-execution"]
+	ignore = dirty
+	path = submodules/task-execution
+	url = upstream:task-execution.git
+	branch = master
+[submodule "submodules/task-scheduler"]
+	ignore = dirty
+	path = submodules/task-scheduler
+	url = upstream:task-scheduler.git
+	branch = master
+[submodule "submodules/tms-service"]
+	ignore = dirty
+	path = submodules/tms-service
+	url = scm:tms-service.git
+	branch = master

@@ -16,3 +16,11 @@ BackDocs/
 .claude/settings.local.json
 CLAUDE.local.md
 /projects/nl2sql-backend/
+
+# Git worktree 工作区（每个 worktree 是独立的工作目录，不提交）
+.worktrees/
+/projects/code-parser/
+
+submodules/
+LearningNote/
+research/

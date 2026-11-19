@@ -95,11 +95,17 @@ MCP（Model Context Protocol）服务器代表**任意代码执行**，工具行
 - ✅ 凭据必须通过 Authorization 头传递，**禁止**出现在 URL 查询字符串中
 - ✅ 新增 MCP 服务器前必须完成安全评估（来源、权限范围、数据传输）
 
-**当前配置**（2026-11-05 PoC 初版，worktree 会话实测连通）：
-- 项目级 `.mcp.json`：`bg-mysql-mcp`（MySQL 连接器）+ `bg-nacos-mcp-test`（Nacos 配置中心），均测试环境
+**当前配置**（2026-11-05 PoC 初版 worktree 会话实测连通；2026-11-10 增 `gitlab` 并实测连通——OAuth 授权与真实 API 调用均通过）：
+- 项目级 `.mcp.json`：`bg-mysql-mcp`（MySQL 连接器）+ `bg-nacos-mcp-test`（Nacos 配置中心），均测试环境；`gitlab`（GitLab 原生 MCP，端点 `POST /api/v4/mcp`；HTTP 传输需 GitLab ≥ 18.6、19.5 起 GA——**本实例实测 `19.5.1-ee`**，授权后可见 36 个工具）
 - 传输类型：Streamable HTTP（远程）；凭据经 `Authorization: Bearer` 头传递
+  - **例外 `gitlab`：走 OAuth 2.1（`mcp` scope）**——配置中无 `headers` 块，长期凭据不落盘（由 Claude Code 自行保管）。**实测流程（2026-11-10）**：未授权时 server 只暴露 `authenticate` / `complete_authentication` 两个工具；调 `authenticate` 取回授权 URL（授权码 + PKCE `S256`，回调 `http://localhost:<随机端口>/callback`）→ 浏览器授权。浏览器与 claude **同机**时回调被本地监听自动接住、授权即完成，两个临时工具消失、真实工具集上线；**跨机**（如 SSH 远端）则回调页报连接失败，需把地址栏完整 URL 原样交给 `complete_authentication` 收尾（`code` 一次性、`state` 须匹配）。代价：不适合无头/CI 场景；若将来需要，改用 fine-grained PAT（勾 MCP tool 资源 + Execute 权限，且该 token 不能带 `mcp` scope）经 `Authorization: Bearer ${GITLAB_MCP_TOKEN}` 注入
 - 凭据注入：`.mcp.json` 一律 `${VAR}` 展开；真实值只存本机 `.env`（gitignore，永不入库），`.envrc` source `.env`
 - ⚠️ **启动环境要求**：`${VAR}` 展开发生在 **claude 进程启动时**（读进程环境）；SessionStart hook 的 `CLAUDE_ENV_FILE` 前言只作用于 Bash 工具，**到不了 MCP 配置**。必须从 direnv 已加载的 shell 启动 claude（zsh 需 `~/.zshrc` 含 `eval "$(direnv hook zsh)"`），否则 server 报 INVALID_CONFIG（2026-11-05 实测：Bash 内变量齐全而 MCP 展开为空——通道不对称）
+- ⚠️ **改 `.env` 后 direnv 不会自动重求值**（2026-11-10 实战踩过，已在 `.envrc` 加 `watch_file .env` 修复）：裸 `source .env` 不把密钥文件登记进 watch 列表，而 direnv 的 shell hook 只比对 watch 列表内文件的 mtime——于是 `.env` 改了、`.envrc` mtime 未变，direnv 判定「无变化」直接跳过求值，新增变量静默不生效（症状：MCP 报 `'url' is not a valid URL`）。诊断要点：
+  - Bash 工具内 `direnv export bash` 输出**全空**是「判定无变化」而非「求值失败」（diff 语义 + `DIRENV_WATCHES` 继承）；要看真求值结果须 `env -u DIRENV_DIR -u DIRENV_WATCHES -u DIRENV_DIFF direnv export bash`
+  - 改过 `.envrc` **内容**后 direnv 按内容哈希 block，须重跑 `direnv allow`；只改 mtime（`touch`）不影响 allow
+  - 验证 watch 是否登记：解码 `DIRENV_WATCHES`（zlib 压缩 + URL-safe base64 的 JSON 路径数组）
+- 🚫 **诊断环境变量时禁止整段打印 `direnv export bash`**：其输出含 `.env` 内全部 token 明文（`$'...'` 形式，常规 `="..."` 掩码正则拦不住）。只取 stderr 的变量名清单，或用 `grep -oE '<VAR>=[^;]*'` 精确提取单个非敏感变量。（2026-11-10 事故：一次诊断把 MYSQL/NACOS 两个测试 token 打进了会话 transcript，已建议轮换）
 
 **禁用配置**：
 - 🚫 `enableAllProjectMcpServers`（批量启用，违反逐一审批原则）
