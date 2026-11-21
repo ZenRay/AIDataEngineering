@@ -13,7 +13,7 @@ jobs:
         run: |
           set -e
           test -f AGENTS.md
-          grep -q "@AGENTS.md" CLAUDE.md
+          grep -Eq '(^|[[:space:]])@AGENTS[.]md([[:space:]]|$)' CLAUDE.md
           python3 -m json.tool .claude/settings.json > /dev/null
           bash -n .claude/hooks/*.sh
 

@@ -15,7 +15,7 @@ jobs:
         run: |
           test -f AGENTS.md
           test -f CLAUDE.md
-          grep -q "@AGENTS.md" CLAUDE.md
+          grep -Eq '(^|[[:space:]])@AGENTS[.]md([[:space:]]|$)' CLAUDE.md
           python3 -m json.tool .claude/settings.json > /dev/null
       - name: uv lock check（如为 uv 项目）
         run: |
