@@ -8,9 +8,11 @@
 #   - exit 2 = 阻断且 stderr 反馈给 Claude；exit 0 ≠ 批准（继续正常权限流程，deny 规则兜底）
 set -u
 
-INPUT=$(cat)
-FILE_PATH=$(echo "$INPUT" | jq -r '.tool_input.file_path // empty' 2>/dev/null) || FILE_PATH=""
-[ -z "$FILE_PATH" ] && exit 0
+# Treat invalid input and parser failures as blocking errors.
+if ! FILE_PATH=$(jq -ers 'if length == 1 and (.[0].tool_input.file_path | type == "string" and length > 0) then .[0].tool_input.file_path else error("invalid file_path") end' 2>/dev/null) || [ -z "$FILE_PATH" ]; then
+  echo "Blocked: unable to parse a non-empty tool_input.file_path (check hook input and jq)." >&2
+  exit 2
+fi
 
 # 反斜杠归一化（Windows / Git Bash）
 FILE_PATH="${FILE_PATH//\\//}"
