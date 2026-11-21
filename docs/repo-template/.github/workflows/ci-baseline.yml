@@ -34,7 +34,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-        with: { fetch-depth: 10 }
-      - uses: gitleaks/gitleaks-action@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with: { fetch-depth: 0 }
+      - name: install pinned gitleaks
+        run: |
+          download_dir="$(mktemp -d "${RUNNER_TEMP}/gitleaks-download.XXXXXX")"
+          bin_dir="$(mktemp -d "${RUNNER_TEMP}/gitleaks-bin.XXXXXX")"
+          archive="${download_dir}/gitleaks_8.24.3_linux_x64.tar.gz"
+          curl -fsSL --retry 3 https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz -o "$archive"
+          printf '%s  %s\n' 9991e0b2903da4c8f6122b5c3186448b927a5da4deef1fe45271c3793f4ee29c "$archive" | sha256sum -c -
+          tar -xzf "$archive" -C "$bin_dir" gitleaks
+          echo "$bin_dir" >> "$GITHUB_PATH"
+      - name: scan reachable history
+        run: gitleaks git --redact --exit-code=2 --log-opts=HEAD .

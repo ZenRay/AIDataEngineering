@@ -18,7 +18,7 @@
 | `.github/workflows/ci-baseline.yml` | GitHub CI（只做仓内自洽检查，不碰内网）；与 `.gitlab-ci.yml` 的去留策略实例化时**经用户确认**（清单第 10 步） | 🔮 首跑转正 |
 | `.gitlab-ci.yml` | GitLab CI 基线（同含 config 自检 / uv lock / pytest / gitleaks 四类检查；行为不保证等价） | 🔮 探针验证后转正 |
 
-**GitHub CI 兼容性**：模板使用 Node 24 版 checkout v6、setup-python v6 和 Gitleaks Action v3。自托管 runner 须至少满足各 action 的版本要求：setup-python v6 / Gitleaks v3 要求 runner ≥2.327.1；checkout v6 如需在 Docker container action 内执行认证 Git 命令，要求 runner ≥2.329.0。checkout v6 将凭据存放位置从 `.git/config` 改到 runner 临时目录；依赖旧位置的自定义步骤须复核。Gitleaks Action 上游要求组织账号下的仓库配置 `GITLEAKS_LICENSE`；实例化时须确认许可条件，将许可证存入 GitHub secret，并在对应 action 的 `env` 中配置 `GITLEAKS_LICENSE: ${{ secrets.GITLEAKS_LICENSE }}`；不能把许可证写入仓库。fork PR 等拿不到密钥的场景需单独评估；本模板未预设许可 secret。以上是版本与使用条件说明，不是已在实际 runner 上跑通的证明。
+**GitHub CI 兼容性**：模板使用 Node 24 版 checkout v6、setup-python v6；setup-python v6 要求自托管 runner ≥2.327.1。checkout v6 如需在 Docker container action 内执行认证 Git 命令，要求 runner ≥2.329.0；其凭据存放位置从 `.git/config` 改到 runner 临时目录，依赖旧位置的自定义步骤须复核。模板 secret scan 使用固定版本的 Gitleaks CLI（非 Gitleaks Action），在 Linux x64 runner 下载后核对 SHA-256；需要访问上游 release，其他系统或架构须调整。扫描检出 `HEAD` 可达的完整 Git 历史（包括 root 和已删除内容），PR 默认检出合并提交时包含其可达历史；不保证覆盖未被当前 HEAD 引用的分支。完整历史扫描可能更慢并发现历史遗留密钥；发现后须按实际情况处置，不能为通过而忽略。CLI 路径不提供 Gitleaks Action 的自动 PR 评论和 SARIF 上传；如需这些能力须另行配置和审查。GitLab 模板未作相同调整。GitHub 托管 runner 已在隔离测试仓验证首次单提交和首次多提交 push；PR、GitLab Runner 及具体业务仓仍须分别验证。
 
 ## 语言基线（可选参考）
 

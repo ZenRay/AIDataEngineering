@@ -11,3 +11,5 @@ python3 -B -I scripts/run-script-tests.py
 模板 GitHub CI 配置自检的回归测试从模板 workflow 中提取该步骤，在临时目录使用 Bash 的 CI 选项运行有效和无效输入，并用旧版 `&&` 写法确认反例可被检测。提取器只接受当前约定的步骤名和 YAML 文本布局；布局变化时测试会失败并需同步维护，不替代 YAML 语义校验或真实 Actions 运行。不会运行模板中的依赖安装、pytest 或 secret scan 步骤。
 
 引用检查测试覆盖顶层 GitHub CI 和模板 GitHub/GitLab CI：匹配以空白或行边界分隔的完整 `@AGENTS.md` 字符串，拒绝正则通配误匹配及附加前后缀。该文本检查不能证明 Agent 运行时实际加载了文件；GitLab Runner 尚需独立实测。
+
+模板 secret scan 回归使用临时 Git 仓和假扫描器验证扫描命令、完整 checkout 配置及 root commit 范围；假扫描器不验证真实 Gitleaks 检出规则或下载步骤，真实 CLI 已在本地合成历史验证；GitHub 托管 runner 已验证首次单提交和多提交 push，PR 与其他平台仍需另行验证。
