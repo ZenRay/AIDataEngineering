@@ -2,6 +2,7 @@
 """Exercise onboarding flow with fake tools and synthetic configuration."""
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import tempfile
 import unittest
@@ -14,7 +15,7 @@ SENTINEL = "synthetic-secret-never-print"
 
 class TestBootstrapFixture(unittest.TestCase):
     def run_case(self, content, missing_scm=False, extra_paths=False,
-                 settings="{}", envrc="source .env\n", push_only=False):
+                 settings="{}", envrc="source .env\n", push_only=False, awk_unescapes=False):
         with tempfile.TemporaryDirectory(prefix="onboarding-fixture-") as directory:
             root = Path(directory)
             project, tools, home = root / "project", root / "bin", root / "home"
@@ -36,17 +37,22 @@ class TestBootstrapFixture(unittest.TestCase):
                     (folder / ".envrc").write_text("# synthetic fixture\n", encoding="utf-8")
                 (project / "linked").mkdir()
                 (project / "linked" / ".envrc").symlink_to(project / ".envrc")
+            config = root / "gitconfig"
+            aliases = ["upstream:", "upstream-user:", "darepo:"]
+            if not missing_scm:
+                aliases.append("scm:")
+            key = "pushInsteadOf" if push_only else "insteadOf"
+            config.write_text('[url "https://example.invalid/"]\n' +
+                              ''.join(f'    {key} = {alias}\n' for alias in aliases) +
+                              ('[url "scm:example"]\n    insteadOf = wrong:\n' if missing_scm else ''),
+                              encoding="utf-8")
+            system_git = shutil.which("git")
+            self.assertIsNotNone(system_git)
             git = '''#!/bin/sh
 case "$1" in
   rev-parse) printf '%s\\n' "$PROJECT_ROOT" ;;
   --version) echo 'git version 2.40.0' ;;
-  config)
-    if [ "$PUSH_ONLY" = "1" ]; then
-      printf '%s\\n' 'url.example.pushinsteadof upstream:' 'url.example.pushinsteadof upstream-user:' 'url.example.pushinsteadof darepo:' 'url.example.pushinsteadof scm:'
-    else
-      printf '%s\\n' 'url.example.insteadof upstream:' 'url.example.insteadof upstream-user:' 'url.example.insteadof darepo:'
-      if [ "$MISSING_SCM" = "1" ]; then echo 'url.scm:example.insteadof wrong:'; else echo 'url.example.insteadof scm:'; fi
-    fi | awk -v pattern="$4" '$1 ~ pattern { print; found=1 } END { if (!found) exit 1 }' ;;
+  config) "$SYSTEM_GIT" config --file "$FIXTURE_GIT_CONFIG" --get-regexp "$4" ;;
 
   submodule) : > "$ACTION_SUBMODULE" ;;
   check-ignore) exit 0 ;;
@@ -63,10 +69,20 @@ if [ "$1" = "--version" ]; then echo '1.0'; else : > "$ACTION_META"; fi
                 path = tools / name
                 path.write_text(script, encoding="utf-8")
                 path.chmod(0o755)
+            if awk_unescapes:
+                awk = tools / "awk"
+                awk.write_text(
+                    "#!/usr/bin/python3\n"
+                    "import os, sys\n"
+                    "args = [x.replace('\\\\.', '.') if x.startswith('pattern=') else x for x in sys.argv[1:]]\n"
+                    "os.execv('/usr/bin/awk', ['awk', *args])\n",
+                    encoding="utf-8",
+                )
+                awk.chmod(0o755)
             env = {"PATH": str(tools) + ":/usr/bin:/bin", "HOME": str(home), "PROJECT_ROOT": str(project),
                    "ACTION_SUBMODULE": str(root / "submodule"), "ACTION_META": str(root / "meta"),
-                   "ACTION_DIRENV": str(root / "direnv"), "MISSING_SCM": "1" if missing_scm else "0",
-                   "PUSH_ONLY": "1" if push_only else "0"}
+                   "ACTION_DIRENV": str(root / "direnv"), "SYSTEM_GIT": system_git,
+                   "FIXTURE_GIT_CONFIG": str(config), "GIT_CONFIG_NOSYSTEM": "1"}
             result = subprocess.run(["/bin/bash", str(project / "scripts" / "onboarding.sh"), "--reviewed"],
                                     cwd=project, env=env, text=True, capture_output=True)
             self.assertNotIn(SENTINEL, result.stdout + result.stderr)
@@ -112,6 +128,11 @@ if [ "$1" = "--version" ]; then echo '1.0'; else : > "$ACTION_META"; fi
 
     def test_push_only_aliases_stop_before_actions(self):
         status, actions, _ = self.run_case('{}', push_only=True)
+        self.assertEqual(status, 1)
+        self.assertEqual(actions, [False, False, False])
+
+    def test_push_only_aliases_stop_when_awk_unescapes_regex(self):
+        status, actions, _ = self.run_case('{}', push_only=True, awk_unescapes=True)
         self.assertEqual(status, 1)
         self.assertEqual(actions, [False, False, False])
 
