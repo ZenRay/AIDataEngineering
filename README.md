@@ -73,4 +73,8 @@
 - ~~E3｜meta 登记 nl2sql-backend~~ ✅（5314783，2026-11-03）：`.meta` 建清单 + 队友两步同步**真实首演成功**（clone 伞形→update→实拉 da 组 d83bb17）
 - ~~D2｜伞形仓 GitLab 归属~~ ✅ 已拍（2026-11-03）：**不放 GitLab**——伞形=个人 GitHub 单主；数据仓群归 `da` 组
 - ~~D3｜镜像范围~~ ✅ 随 D2 转化：伞形无镜像问题；"数据仓→个人副本"变逐仓再议（方案 A 能力已验证备用）
-- ~~URL 脱敏~~ ✅（8b23dc0，v1.8）：仓内全别名（upstream:/upstream-user:/darepo:），真实域名仅存本机 ~/.gitconfig；onboarding 含映射检查
+- ~~URL 脱敏~~ ✅（8b23dc0，v1.8）：当时记录的别名为 upstream:/upstream-user:/darepo:，真实域名仅存本机 ~/.gitconfig；**2026-11-21 补充**：当前 `.gitmodules` 另使用 `scm:`，onboarding 静态检查四类映射。
+
+### 顶层脚本测试
+
+维护中的 onboarding 与配置检查器回归测试位于 [`tests/`](tests/README.md)；运行方式和隔离边界见该说明。顶层 CI 配置已加入回归步骤；真实 CI 运行结果须以实际回执为准。

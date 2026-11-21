@@ -30,6 +30,11 @@ jobs:
           ! grep -Eq 'enableAllProjectMcpServers|enabledMcpjsonServers' .claude/settings.json
           ! grep -q 'ANTHROPIC_BASE_URL' .claude/settings.json
 
+      - name: top-level script regression tests
+        run: |
+          bash -n scripts/onboarding.sh
+          python3 -B -I scripts/run-script-tests.py
+
   secret-scan:
     runs-on: ubuntu-latest
     steps:

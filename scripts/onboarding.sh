@@ -37,12 +37,8 @@ done
 # MCP 特定检查（2026-11 新增）
 if [ -f .mcp.json ]; then
   ok ".mcp.json 存在（项目级 MCP 配置）"
-  # 检查是否硬编码凭据（简单的启发式检查）
-  if grep -Eq '(password|passwd|pwd|secret|api_key|apikey)\s*[:=]\s*["\x27][^$\{]' .mcp.json 2>/dev/null; then
-    bad ".mcp.json 疑似含硬编码凭据（禁止！必须用环境变量注入）"
-  else
-    ok ".mcp.json 无硬编码凭据（使用环境变量注入 ✓）"
-  fi
+  # The credential checker runs only after the human review checkpoint below.
+  warn ".mcp.json 凭据检查将在人工审查后进行；未检出不代表安全"
 else
   warn ".mcp.json 不存在（MCP PoC 评估阶段，后续按需创建）"
 fi
@@ -72,7 +68,7 @@ fi
 
 echo "== 3/7 人工配置审查（不可跳过）=="
 echo "  trust 前需过目的文件："
-for p in .claude/settings.json .claude/hooks/*.sh .claude/skills .mcp.json .codex/config.toml scripts/onboarding.sh; do
+for p in .claude/settings.json .claude/hooks/*.sh .claude/skills .mcp.json .codex/config.toml scripts/onboarding.sh scripts/check-mcp-config.py; do
   [ -e "$p" ] && echo "    $p"
 done
 if [ "${1:-}" != "--reviewed" ]; then
@@ -81,18 +77,41 @@ if [ "${1:-}" != "--reviewed" ]; then
   [ "$ans" = "yes" ] || { echo "  已中止：顺序必须是 clone → 审查 → trust。"; exit 1; }
 fi
 
+# Inspect common patterns without printing configuration values.
+if [ -f .mcp.json ]; then
+  if ! command -v python3 >/dev/null 2>&1; then
+    bad "缺 python3：无法检查 .mcp.json 常见凭据模式，需人工审查"
+    echo "  已中止：未完成配置检查，不执行 bootstrap。"
+    exit 1
+  elif python3 -I scripts/check-mcp-config.py .mcp.json; then
+    ok ".mcp.json 常见凭据模式未检出；仍需人工审查"
+  else
+    bad ".mcp.json 检查未通过或无法读取/解析；需人工审查"
+    echo "  已中止：未完成配置检查，不执行 bootstrap。"
+    exit 1
+  fi
+fi
+
+# Prevent bootstrap when any earlier mandatory check has failed.
+if [ "$FAIL" -ne 0 ]; then
+  echo "  已中止：前置检查未通过，不执行 bootstrap 或环境授权。"
+  exit 1
+fi
+
 echo "== 4/7 仓库 bootstrap =="
 # 伞形仓的 .gitmodules/.meta 使用 URL 别名（upstream: / upstream-user: / darepo: / scm:），
 # 真实地址只存在于每人本机的 ~/.gitconfig（insteadOf 映射，不入仓不推送）。
 # 首次配置：向伞形仓负责人索取四条 git config --global 映射命令（经内网/线下渠道传递）。
 MISSING_ALIASES=""
 for a in upstream: upstream-user: darepo: scm:; do
-  if ! git config --global --get-regexp 'insteadof' 2>/dev/null | grep -q "$a"; then
+  if ! git config --global --get-regexp '^url\..*\.insteadof$' 2>/dev/null | awk -v alias="$a" '$NF == alias { found=1 } END { exit !found }'; then
     MISSING_ALIASES="$MISSING_ALIASES $a"
   fi
 done
 if [ -n "$MISSING_ALIASES" ]; then
   bad "缺少 URL 别名映射 ——$MISSING_ALIASES —— submodule/meta 将无法解析！请向负责人索取对应的 insteadOf 配置命令并执行后重跑本脚本"
+  echo "  已中止：别名检查未通过，不执行 bootstrap。"
+  exit 1
 else
   ok "URL 别名映射已配置（upstream:/upstream-user:/darepo:/scm: 全部就绪）"
 fi
@@ -106,7 +125,7 @@ fi
 echo "== 5/7 环境激活（方案 D：direnv）=="
 while IFS= read -r e; do
   direnv allow "$(dirname "$e")" >/dev/null 2>&1 && ok "direnv allow $(dirname "$e")" || bad "direnv allow 失败：$(dirname "$e")"
-done < <(find . -name .envrc -not -path './submodules/*' -not -path './docs/repo-template/*' -not -path './.git/*' 2>/dev/null)
+done < <(find . \( -path './BackDocs' -o -path './submodules' -o -path './docs/repo-template' -o -path './.git' \) -prune -o -type f -name .envrc -print 2>/dev/null)
 if command -v direnv >/dev/null && ! grep -rq 'direnv hook' ~/.bashrc ~/.zshrc ~/.profile 2>/dev/null; then
   warn "shell rc 未见 direnv hook——交互终端需要：eval \"\$(direnv hook bash)\"（Agent 侧走 settings.json 双 hook，不依赖此项）"
 fi
